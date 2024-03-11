@@ -1,41 +1,63 @@
-import { createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword, signOut, updateEmail, updatePassword } from "firebase/auth";
-import { writable } from "svelte/store";
-import { auth } from "../lib/firebase/firebase.client";
 
+import { auth } from "../lib/firebase/firebase.client";
+import { writable } from "svelte/store";
+// @ts-ignore
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail, updateProfile, updateEmail, updatePassword } from "firebase/auth";
 export const authStore = writable({
     isLoading: true,
-    currentUser: null
-})
+    currentUser: null,
+});
 
 export const authHandlers = {
+    // @ts-ignore
     login: async (email, password) => {
-        await signInWithEmailAndPassword(auth, email, password)
+        await signInWithEmailAndPassword(auth, email, password);
     },
-    signup: async (email, password) => {
+    // @ts-ignore
+    signup: async (email, password, displayName) => {
         await createUserWithEmailAndPassword(auth, email, password)
+            .then((res) => {
+                updateProfile(res.user, {
+                    displayName: displayName,
+                })
+                .then(() => {
+                    // Handle success
+                });
+            })
+            .catch((error) => {
+                // Handle error
+                console.log("err", error);
+            });
     },
     logout: async () => {
-        await signOut(auth)
+        await signOut(auth);
     },
+    // @ts-ignore
     resetPassword: async (email) => {
-        console.log('WE ARE HERE', email)
         if (!email) {
-            console.log('inHERE')
-            return
+            console.log("inHERE");
+            return;
         }
-        await sendPasswordResetEmail(auth, email)
+        await sendPasswordResetEmail(auth, email);
     },
+    // @ts-ignore
     updateEmail: async (email) => {
-        authStore.update(curr => {
+        authStore.update((curr) => {
             return {
-                ...curr, currentUser: {
-                    ...curr.currentUser, email: email
-                }
-            }
-        })
-        await updateEmail(auth.currentUser, email)
+                ...curr,
+                currentUser: {
+                    // @ts-ignore
+                    ...curr.currentUser,
+                    email: email,
+                },
+            };
+        });
+        // @ts-ignore
+        await updateEmail(auth.currentUser, email);
     },
+    // @ts-ignore
     updatePassword: async (password) => {
-        await updatePassword(auth.currentUser, password)
-    }
-}
+        // @ts-ignore
+        await updatePassword(auth.currentUser, password);
+    },
+};

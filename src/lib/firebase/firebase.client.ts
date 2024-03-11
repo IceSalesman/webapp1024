@@ -7,22 +7,14 @@ import { getAuth, setPersistence, inMemoryPersistence } from 'firebase/auth'
 // Your web app's Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyAwkCZ--BTYAZq1jvM_HMBdLD03vM-0XxY",
-
     authDomain: "volejbols-832d7.firebaseapp.com",
-  
     projectId: "volejbols-832d7",
-  
     storageBucket: "volejbols-832d7.appspot.com",
-  
     messagingSenderId: "1001486154514",
-  
     appId: "1:1001486154514:web:d7a4ed946817a28b0191cb",
-  
     measurementId: "G-Z559M27T22"
-  
 };
 
-// Initialize Firebas\
 let firebaseApp;
 if (!getApps().length) {
     firebaseApp = initializeApp(firebaseConfig)

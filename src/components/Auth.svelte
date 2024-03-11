@@ -5,6 +5,7 @@
 	let email = '';
 	let password = '';
 	let confirmPassword = '';
+	let displayName = '';
 
 	async function handleSubmit() {
 		if (!email || !password || (register && !confirmPassword)) {
@@ -13,7 +14,7 @@
 
 		if (register && password === confirmPassword) {
 			try {
-				await authHandlers.signup(email, password);
+				await authHandlers.signup(email, password, displayName);
 			} catch (err) {
 				console.log(err);
 			}
@@ -33,20 +34,25 @@
 <div class="container">
 	<h1>{register ? 'Register' : 'Log in'}</h1>
 	<form>
+		
 		<label>
-			<input bind:value={email} type="email" placeholder="Email" />
+			<input bind:value={email} type="email" placeholder="E-pasts" />
 		</label>
 		<label>
-			<input bind:value={password} type="password" placeholder="Password" />
+			<input bind:value={password} type="password" placeholder="Parole" />
 		</label>
 		{#if register}
 			<label>
-				<input bind:value={confirmPassword} type="password" placeholder="Confirm Password" />
+				<input bind:value={confirmPassword} type="password" placeholder="Apstiprini paroli" />
+			</label>
+			<label>
+				<input bind:value={displayName} type="text" placeholder="Lietotājvārds">
 			</label>
 		{/if}
 		<button on:click={handleSubmit}>Submit</button>
 	</form>
 	{#if register}
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div
 			on:click={() => {
 				register = false;
@@ -57,6 +63,7 @@
 			<p>Log in</p>
 		</div>
 	{:else}
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div
 			on:click={() => {
 				register = true;
@@ -65,6 +72,7 @@
 		>
 			Don't have an account? <p>Sign Up</p>
 		</div>
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div
 			on:click={() => {
 				authHandlers.resetPassword(email)
