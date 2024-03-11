@@ -4,7 +4,7 @@
 
 <main>
   <h1>Welcome to {name}!</h1>
-  <p>This is the intro page of our web app.</p>
+  <p>This is the intro of our web app.</p>
 </main>
 
 <style>
