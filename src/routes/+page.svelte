@@ -3,7 +3,7 @@
 </script>
 
 <main>
-  <h1>Welcome to {name}!</h1>
+  <h1>Welcome {name}!</h1>
   <p>This is the intro of our web app.</p>
 </main>
 
