@@ -15,8 +15,6 @@ jobs:
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_VOLEJBOLA_MAJASLAPA }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_VOLEJBOLS_832D7 }}'
           channelId: live
-          projectId: volejbola-majaslapa
-        env:
-          FIREBASE_CLI_EXPERIMENTS: webframeworks
+          projectId: volejbols-832d7
