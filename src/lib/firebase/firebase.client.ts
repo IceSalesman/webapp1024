@@ -6,13 +6,20 @@ import { getAuth, setPersistence, inMemoryPersistence } from 'firebase/auth'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyC_cYjHL0kpIHih5EHJ5pmFgoWVmdaV2Io",
-    databaseURL: "https://volejbola-majaslapa-default-rtdb.europe-west1.firebasedatabase.app",
-    authDomain: "volejbola-majaslapa.firebaseapp.com",
-    projectId: "volejbola-majaslapa",
-    storageBucket: "volejbola-majaslapa.appspot.com",
-    messagingSenderId: '301976300436',
-    appId: '1:301976300436:web:49ee3797e790361be2fd81'
+    apiKey: "AIzaSyAwkCZ--BTYAZq1jvM_HMBdLD03vM-0XxY",
+
+    authDomain: "volejbols-832d7.firebaseapp.com",
+  
+    projectId: "volejbols-832d7",
+  
+    storageBucket: "volejbols-832d7.appspot.com",
+  
+    messagingSenderId: "1001486154514",
+  
+    appId: "1:1001486154514:web:d7a4ed946817a28b0191cb",
+  
+    measurementId: "G-Z559M27T22"
+  
 };
 
 // Initialize Firebas\
