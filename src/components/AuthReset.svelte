@@ -25,11 +25,6 @@
 	<div>
 		<button
 			on:click={() => {
-				action = 'updateEmail';
-			}}>Update Email</button
-		>
-		<button
-			on:click={() => {
 				action = 'updatePass';
 			}}>Update Password</button
 		>
@@ -40,14 +35,6 @@
 				<input bind:value={newPass} type="password" placeholder="New Password" />
 			</label>
 
-			<button on:click={handleSubmit}>Submit</button>
-		</form>
-	{/if}
-	{#if action === 'updateEmail'}
-		<form>
-			<label>
-				<input bind:value={newEmail} type="email" placeholder="New Email" />
-			</label>
 			<button on:click={handleSubmit}>Submit</button>
 		</form>
 	{/if}
