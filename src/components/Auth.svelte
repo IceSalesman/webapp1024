@@ -1,11 +1,18 @@
 <script>
 	import { authHandlers, authStore } from '../stores/authStore';
+	import { createEventDispatcher } from 'svelte';
+	import WrongPass from './snackbar/wrongPass.svelte';
+	import RegError from './snackbar/regError.svelte';
 
 	let register = false;
 	let email = '';
 	let password = '';
 	let confirmPassword = '';
 	let displayName = '';
+	let snackbarMessage = '';
+	let snackbarMessage2 = '';
+
+	const dispatch = createEventDispatcher();
 
 	async function handleSubmit() {
 		if (!email || !password || (register && !confirmPassword)) {
@@ -16,12 +23,16 @@
 			try {
 				await authHandlers.signup(email, password, displayName);
 			} catch (err) {
+				snackbarMessage2 = 'Kļūda reģistrācijas laikā. Mēģiniet vēlreiz.';
+				dispatch('showSnackbar2', { message: snackbarMessage2 });
 				console.log(err);
 			}
 		} else {
 			try {
 				await authHandlers.login(email, password);
 			} catch (err) {
+				snackbarMessage = 'Nepareiza parole vai e-pasts. Mēģiniet vēlreiz.';
+				dispatch('showSnackbar', { message: snackbarMessage });
 				console.log(err);
 			}
 		}
@@ -92,6 +103,17 @@
 			{/if}
 	</div>
 </div>
-<style>
 
-</style>
+<!-- Snackbar component -->
+{#if snackbarMessage}
+	<div class="fixed bottom-2 right-2">
+		<WrongPass />
+	</div>
+	
+{/if}
+{#if snackbarMessage2}
+	<div class="fixed bottom-2 right-2">
+		<RegError />
+	</div>
+{/if}
+
