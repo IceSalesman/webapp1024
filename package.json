@@ -39,6 +39,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"firebase": "^10.8.1"
+		"firebase": "^10.8.1",
+		"svelte-materialify": "^0.3.11"
 	}
 }

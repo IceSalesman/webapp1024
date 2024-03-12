@@ -1,4 +1,3 @@
-
 import { auth } from "../lib/firebase/firebase.client";
 import { writable } from "svelte/store";
 // @ts-ignore
@@ -17,9 +16,9 @@ export const authHandlers = {
     // @ts-ignore
     signup: async (email, password, displayName) => {
         await createUserWithEmailAndPassword(auth, email, password)
-            .then((res) => {
-                sendEmailVerification(res.user);
-                updateProfile(res.user, {
+            .then(async (res) => {
+                await sendEmailVerification(res.user);
+                await updateProfile(res.user, {
                     displayName: displayName,                    
                 });
             });
