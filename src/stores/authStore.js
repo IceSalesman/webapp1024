@@ -22,7 +22,7 @@ export const authHandlers = {
                     displayName: displayName,
                 })
                 .then(() => {
-                    sendEmailVerification(res.user, email);
+                    sendEmailVerification(res.user);
                 });
             })
             .catch((error) => {
