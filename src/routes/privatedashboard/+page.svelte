@@ -1,4 +1,5 @@
 <script>
+	import Loading from '../../components/Loading.svelte';
 	import AuthReset from '../../components/AuthReset.svelte';
 	// @ts-ignore
 	import { auth } from '../../lib/firebase/firebase.client';
@@ -32,28 +33,24 @@
 </script>
 
 {#if $authStore.currentUser}
-	<div>
+	<div class="flex-col">
 		<h1>CURRENT USER: {email}</h1>
 		<h1>CURRENT DISPLAYNAME: {displayName}</h1>
 		<h1>IS VERIFIED?: {isverified}</h1>
-		<AuthReset />
+
+
         <button on:click={authHandlers.logout}>Logout</button>
 
 	</div>
 {:else}
-	<div>Loading....</div>
+
+	<div class="flex items-center justify-center">
+		<Loading />
+	</div>
+	
+
 {/if}
 
 <style>
-	div {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-	}
-
-	h1 {
-		text-align: center;
-	}
+	
 </style>
