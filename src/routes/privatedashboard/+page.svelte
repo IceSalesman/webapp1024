@@ -14,12 +14,19 @@
 	 * @type {any}
 	 */
 	let displayName;
+
+	/**
+	 * @type {any}
+	 */
+	let isverified;
 	authStore.subscribe((curr) => {
 		console.log('CURR', curr);
 		// @ts-ignore
 		email = curr?.currentUser?.email;
 		// @ts-ignore
 		displayName = curr?.currentUser?.displayName;
+		// @ts-ignore
+		isverified = curr?.currentUser?.emailVerified;
 	});
 
 </script>
@@ -28,6 +35,7 @@
 	<div>
 		<h1>CURRENT USER: {email}</h1>
 		<h1>CURRENT DISPLAYNAME: {displayName}</h1>
+		<h1>IS VERIFIED?: {isverified}</h1>
 		<AuthReset />
         <button on:click={authHandlers.logout}>Logout</button>
 

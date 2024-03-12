@@ -13,11 +13,6 @@
 		if (action === 'updatePass') {
 			return await authHandlers.updatePassword(newPass);
 		}
-
-		if (action === 'updateEmail') {
-            console.log(newEmail)
-			return await authHandlers.updateEmail(newEmail);
-		}
 	}
 </script>
 

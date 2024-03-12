@@ -18,16 +18,10 @@ export const authHandlers = {
     signup: async (email, password, displayName) => {
         await createUserWithEmailAndPassword(auth, email, password)
             .then((res) => {
+                sendEmailVerification(res.user);
                 updateProfile(res.user, {
-                    displayName: displayName,
-                })
-                .then(() => {
-                    sendEmailVerification(res.user);
+                    displayName: displayName,                    
                 });
-            })
-            .catch((error) => {
-                // Handle error
-                console.log("err", error);
             });
     },
     logout: async () => {
