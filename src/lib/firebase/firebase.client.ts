@@ -4,6 +4,9 @@ import { deleteApp, getApp, getApps, initializeApp } from "firebase/app";
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getAuth, setPersistence, inMemoryPersistence } from 'firebase/auth'
 
+import { getFirestore } from "firebase/firestore"
+
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyAwkCZ--BTYAZq1jvM_HMBdLD03vM-0XxY",
@@ -24,4 +27,6 @@ if (!getApps().length) {
     firebaseApp = initializeApp(firebaseConfig)
 }
 
-export const auth = getAuth(firebaseApp)
+export const auth = getAuth(firebaseApp);
+
+export const db = getFirestore(firebaseApp);

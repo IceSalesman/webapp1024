@@ -2,4 +2,8 @@
 	import Auth from "../components/Auth.svelte";
 
 </script>
-<Auth/>
+
+<body class="">
+	<Auth/>
+</body>
+

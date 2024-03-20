@@ -11,7 +11,12 @@ export const authStore = writable({
 export const authHandlers = {
     // @ts-ignore
     login: async (email, password) => {
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(auth, email, password)
+            .then(async (res) => {
+                if (!auth.currentUser?.emailVerified){
+                    await sendEmailVerification(res.user);
+                }               
+            });
     },
     // @ts-ignore
     signup: async (email, password, displayName) => {

@@ -4,6 +4,9 @@
 	// @ts-ignore
 	import { auth } from '../../lib/firebase/firebase.client';
 	import { authHandlers, authStore } from '../../stores/authStore';
+	import { onMount } from 'svelte';
+	import NotVerified from '../../components/notVerified.svelte'
+	import Dashboard from '../../components/Dashboard.svelte'
 
 	// @ts-ignore
 	/**
@@ -23,34 +26,34 @@
 	authStore.subscribe((curr) => {
 		console.log('CURR', curr);
 		// @ts-ignore
-		email = curr?.currentUser?.email;
-		// @ts-ignore
-		displayName = curr?.currentUser?.displayName;
-		// @ts-ignore
 		isverified = curr?.currentUser?.emailVerified;
 	});
 
+	
+
 </script>
 
-{#if $authStore.currentUser}
-	<div class="flex-col">
-		<h1>CURRENT USER: {email}</h1>
-		<h1>CURRENT DISPLAYNAME: {displayName}</h1>
-		<h1>IS VERIFIED?: {isverified}</h1>
 
 
-        <button on:click={authHandlers.logout}>Logout</button>
 
-	</div>
-{:else}
+<main class="">
+	{#if $authStore.currentUser}
+		{#if isverified}
+			<Dashboard />
 
-	<div class="flex items-center justify-center">
-		<Loading />
-	</div>
-	
+		{:else}
+			<NotVerified />
 
-{/if}
+		{/if}
 
-<style>
-	
-</style>
+  
+	{:else}
+
+		<div class="flex w-full h-full items-center justify-center dark:bg-gray-900 dark:text-gray-100 h-screen">
+			<Loading />
+		</div>
+
+	{/if}
+</main>
+
+
