@@ -11,15 +11,15 @@
 </script>
 
 {#if showCodeSnippet}
-    <div class="flex items-center rounded shadow-md overflow-hidden max-w-xl relative dark:bg-gray-900 dark:text-gray-100">
-        <div class="self-stretch flex items-center px-3 flex-shrink-0 dark:bg-gray-700 dark:text-violet-400">
+    <div class="flex items-center rounded shadow-md overflow-hidden max-w-xl relative bg-gray-900 text-gray-100">
+        <div class="self-stretch flex items-center px-3 flex-shrink-0 bg-gray-700 text-violet-400">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-8 w-8">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
         </div>
         <div class="p-4 flex-1">
             <h3 class="text-xl font-bold">Kļūda</h3>
-            <p class="text-sm dark:text-gray-400">Paroles nesakrīt. Mēģiniet vēlreiz.
+            <p class="text-sm text-gray-400">Paroles nesakrīt. Mēģiniet vēlreiz.
                 
             </p>
         </div>

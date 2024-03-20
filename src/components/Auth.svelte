@@ -43,32 +43,32 @@
 </script>
 
 
-<body class="dark:bg-gray-800 dark:text-gray-100">
+<body class="bg-gray-800 text-gray-100">
 	<div class="flex justify-center items-center h-screen">
-		<div class="w-full max-w-md p-8 space-y-3 rounded-xl dark:bg-gray-900 dark:text-gray-100">
+		<div class="w-full max-w-md p-8 space-y-3 rounded-xl bg-gray-900 text-gray-100">
 			<h1 class="text-2xl font-bold text-center">{register ? 'Reģistrēties' : 'Pieslēgties'}</h1>
 				<form class="space-y-6">
 					<div>
-						<input bind:value={email} type="email" id="email" placeholder="E-pasts" class="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-700" />
+						<input bind:value={email} type="email" id="email" placeholder="E-pasts" class="w-full p-2 border rounded bg-gray-800 border-gray-700" />
 					</div>
 					<div>
-						<input bind:value={password} type="password" placeholder="Parole" class="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-700" />
+						<input bind:value={password} type="password" placeholder="Parole" class="w-full p-2 border rounded bg-gray-800 border-gray-700" />
 					</div>
 				
 					{#if register}
 						<div>
-							<input bind:value={confirmPassword} class="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-700" type="password" placeholder="Apstiprini paroli" />
+							<input bind:value={confirmPassword} class="w-full p-2 border rounded bg-gray-800 border-gray-700" type="password" placeholder="Apstiprini paroli" />
 						</div>
 						<div>
-							<input bind:value={displayName} class="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-700" type="text" placeholder="Vārds, Uzvārds">
+							<input bind:value={displayName} class="w-full p-2 border rounded bg-gray-800 border-gray-700" type="text" placeholder="Vārds, Uzvārds">
 						</div>
 					{/if}
-					<button class="block w-full p-3 text-center rounded-sm dark:text-gray-900 dark:bg-violet-300" on:click={handleSubmit}>{register ? 'Reģistrēties' : 'Pieslēgties'}</button>
+					<button class="block w-full p-3 text-center rounded-sm text-gray-900 bg-violet-300" on:click={handleSubmit}>{register ? 'Reģistrēties' : 'Pieslēgties'}</button>
 				</form>
 				{#if register}
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div>
-						<p class="text-xs text-center sm:px-6 dark:text-gray-400">Jau ir konts?
+						<p class="text-xs text-center sm:px-6 text-gray-400">Jau ir konts?
 						
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<a 
@@ -76,12 +76,12 @@
 							register = false;
 						}}
 						on:keydown={() => {}} 
-						class="hover:underline dark:text-gray-100 cursor-pointer">Pieslēdzies!</a>
+						class="hover:underline text-gray-100 cursor-pointer">Pieslēdzies!</a>
 					</div>
 				{:else}
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div>
-						<p class="text-xs text-center sm:px-6 dark:text-gray-400">Nav konts?
+						<p class="text-xs text-center sm:px-6 text-gray-400">Nav konts?
 						
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<a 
@@ -89,7 +89,7 @@
 							register = true;
 						}}
 						on:keydown={() => {}} 
-						class="hover:underline dark:text-gray-100 cursor-pointer">Reģistrējies!</a>
+						class="hover:underline text-gray-100 cursor-pointer">Reģistrējies!</a>
 					</div>
 	
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -98,7 +98,7 @@
 							authHandlers.resetPassword(email)
 						}}
 						on:keydown={() => {}} 
-						class="flex justify-center text-xs dark:text-gray-400 cursor-pointer hover:underline"
+						class="flex justify-center text-xs text-gray-400 cursor-pointer hover:underline"
 					>
 						Aizmirsi paroli?
 					</div>
@@ -120,4 +120,3 @@
 		<RegError />
 	</div>
 {/if}
-

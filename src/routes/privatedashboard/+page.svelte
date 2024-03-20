@@ -1,6 +1,6 @@
 <script>
 	import Loading from '../../components/Loading.svelte';
-	import AuthReset from '../../components/AuthReset.svelte';
+	
 	// @ts-ignore
 	import { auth } from '../../lib/firebase/firebase.client';
 	import { authHandlers, authStore } from '../../stores/authStore';
@@ -49,7 +49,7 @@
   
 	{:else}
 
-		<div class="flex w-full h-full items-center justify-center dark:bg-gray-900 dark:text-gray-100 h-screen">
+		<div class="flex w-full h-full items-center justify-center bg-gray-900 text-gray-100 h-screen">
 			<Loading />
 		</div>
 
