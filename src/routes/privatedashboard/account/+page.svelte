@@ -25,6 +25,18 @@
         isverified = curr?.currentUser?.emailVerified;
 	});
 
+    /**
+     * @type {string}
+     */
+    let newDisplayName = '';
+
+    
+    async function handleSubmit() {
+
+        await authHandlers.updateProfile({displayName: newDisplayName});
+    }
+
+
 </script>
 
 
@@ -41,8 +53,14 @@
             <p class="font-bold">Email:</p>
             <p>{email}</p>
         </div>
-        <button class="flex justify-center bg-violet-300 hover:bg-violet-500 text-white font-bold py-2 px-4 rounded text-black">
-            Mainīt vārdu
-        </button>
+        <form on:submit={handleSubmit}>
+            <div class="mb-4">
+                <p class="font-bold">Change Name:</p>
+                <input type="text" bind:value={newDisplayName} class="w-full p-2 border rounded bg-gray-800 border-gray-700"/>
+            </div>
+            <button type="submit" class="flex justify-center bg-violet-300 hover:bg-violet-500 text-white font-bold py-2 px-4 rounded text-black">
+                Mainīt vārdu
+            </button>
+        </form>
     </div>
 </main>
