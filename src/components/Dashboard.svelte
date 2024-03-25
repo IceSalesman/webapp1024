@@ -87,23 +87,17 @@
 
 	async function checkIn() {
 		const practiceRef = doc(collection(db, 'practices'), practiceId);
-        try {
-            await updateDoc(practiceRef, {
-			    attendees: arrayUnion({ email, displayName })
-		    });
-        } catch (FirebaseError) {
-            await setDoc(practiceRef, {
-			    attendees: arrayUnion({ email, displayName })
-		    });
-        }
-		
+
+		await updateDoc(practiceRef, {
+			attendees: arrayUnion({ email, displayName })
+		});
 
 		refreshPage();
 	}
 
 	async function checkOut() {
 		const practiceRef = doc(collection(db, 'practices'), practiceId);
-        
+
 		await updateDoc(practiceRef, {
 			attendees: arrayRemove({ email, displayName })
 		});
@@ -116,12 +110,15 @@
 		const practiceSnap = await getDoc(practiceRef);
 
 		if (practiceSnap.exists()) {
+            console.log('Document found')
 			attendees = practiceSnap.data().attendees;
 		} else {
-			console.log('No such document');
+			console.log('No such document, creating new one');
+            await setDoc(practiceRef, {
+                attendees: []
+		    });
 		}
 	});
-    
 	//onMount(() => {
 	//	const interval = setInterval(() => {
 	//		time = new Date();
