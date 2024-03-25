@@ -121,16 +121,17 @@
 			console.log('No such document');
 		}
 	});
-	onMount(() => {
-		const interval = setInterval(() => {
-			time = new Date();
-			console.log(time.getMonth());
-		}, 1000);
-
-		return () => {
-			clearInterval(interval);
-		};
-	});
+    
+	//onMount(() => {
+	//	const interval = setInterval(() => {
+	//		time = new Date();
+	//		console.log(time.getMonth());
+	//	}, 1000);
+    //
+	//	return () => {
+	//		clearInterval(interval);
+	//	};
+	//});
 
 	async function goAcc() {
 		window.location.href = '/privatedashboard/account';
