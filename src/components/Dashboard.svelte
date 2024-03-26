@@ -72,7 +72,13 @@
 	function refreshPage() {
 		window.location.reload();
 	}
-
+    
+    /**
+	 * Tehniski labāk būtu pārtaisīt tā, ka viņs nevis taisa docu ar cilvēkiem, kas nāk,
+     * bet labāk ka vins edito docu ar useriem (takā 'comingNextPractice = true/false')
+     * un tad displajot tikai tos, kas ir true, kā arī, lai automatiski katru nedēlu parmaina uz false
+     * Man liekas, ka sita vins nepistos nomainot vārdu, jo mes varetu vienk user doca nomainit. Paldies par uzmanību
+	 */
 	function getNextSaturday() {
 		const now = new Date();
 		const nextSaturday = new Date(
