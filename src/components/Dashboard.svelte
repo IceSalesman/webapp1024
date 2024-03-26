@@ -87,11 +87,12 @@
 
 	async function checkIn() {
 		const practiceRef = doc(collection(db, 'practices'), practiceId);
-
-		await updateDoc(practiceRef, {
-			attendees: arrayUnion({ email, displayName })
+        
+        await updateDoc(practiceRef, {
+            
+		    attendees: arrayUnion({ email, displayName })
 		});
-
+            
 		refreshPage();
 	}
 

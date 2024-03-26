@@ -60,21 +60,12 @@ export const authHandlers = {
         await updatePassword(auth.currentUser, password);
     },
     // @ts-ignore
-    //TODO: fix displayname changer
+    //TODO: fix this
+    
     updateProfile: async (displayName) => {
-        authStore.update((curr) => {
-            return {
-                ...curr,
-                currentUser: {
-                    // @ts-ignore
-                    ...curr.currentUser,
-                    displayName: displayName,
-                },
-            };
-        });
         // @ts-ignore
         await updateProfile(auth.currentUser, {
-            displayName: displayName,
+            displayName: displayName,                    
         });
     },
 };
