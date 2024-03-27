@@ -1,12 +1,14 @@
 import { auth } from "../lib/firebase/firebase.client";
 import { writable } from "svelte/store";
-// @ts-ignore
+
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail, updateProfile, updateEmail, updatePassword, sendEmailVerification } from "firebase/auth";
 
 export const authStore = writable({
     isLoading: true,
     currentUser: null,
+    
 });
+
 
 export const authHandlers = {
     // @ts-ignore

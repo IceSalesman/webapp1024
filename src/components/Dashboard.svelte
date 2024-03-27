@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { authStore, authHandlers } from '../stores/authStore';
+	import { dayDict, monthDict } from '../stores/dictStore';
 	import { db } from '../lib/firebase/firebase.client';
 	import {
 		collection,
@@ -11,7 +12,6 @@
 		arrayRemove
 	} from 'firebase/firestore';
 	import { onMount } from 'svelte';
-	import { signOut } from 'firebase/auth';
 
 	let email: any;
 	let displayName: any;
@@ -20,41 +20,12 @@
 
 	let time = new Date();
 
-	const dayDict = {
-		0: 'rīt (šodien)',
-		1: 'rīt (rīt)',
-		2: 'rīt (parīt)',
-		3: 'rīt (aizparīt)',
-		4: 'rīt (aiz-aizparīt)',
-		5: 'rīt (aiz-aiz-aizparīt)',
-		6: 'rīt (aiz-aiz-aiz-aizparīt)'
-	};
-
-	const monthDict = {
-		0: 'janvārī',
-		1: 'februārī',
-		2: 'martā',
-		3: 'aprīlī',
-		4: 'maijā',
-		5: 'jūnijā',
-		6: 'jūlijā',
-		7: 'augustā',
-		8: 'septembrī',
-		9: 'oktobrī',
-		10: 'novembrī',
-		11: 'decembrī'
-	};
-
-	$: h = time.getHours();
-	$: m = time.getMinutes();
-	$: s = time.getSeconds();
-
 	$: dd = time.getDate();
 	$: mm = time.getMonth();
-	$: yyyy = time.getFullYear();
 
 	$: daysTillSaturday = 6 - time.getDay();
 	$: saturdayDate = dd + daysTillSaturday;
+
 	$: {
 		if (daysTillSaturday < 0) {
 			daysTillSaturday = 6;
@@ -62,22 +33,23 @@
 	}
 
 	authStore.subscribe((curr) => {
-		console.log('CURR', curr);
-
+		// @ts-ignore
 		email = curr?.currentUser?.email;
+		// @ts-ignore
 		displayName = curr?.currentUser?.displayName;
+		// @ts-ignore
 		isverified = curr?.currentUser?.emailVerified;
 	});
 
 	function refreshPage() {
 		window.location.reload();
 	}
-    
-    /**
+
+	/**
 	 * Tehniski labāk būtu pārtaisīt tā, ka viņs nevis taisa docu ar cilvēkiem, kas nāk,
-     * bet labāk ka vins edito docu ar useriem (takā 'comingNextPractice = true/false')
-     * un tad displajot tikai tos, kas ir true, kā arī, lai automatiski katru nedēlu parmaina uz false
-     * Man liekas, ka sita vins nepistos nomainot vārdu, jo mes varetu vienk user doca nomainit. Paldies par uzmanību
+	 * bet labāk ka vins edito docu ar useriem (takā 'comingNextPractice = true/false')
+	 * un tad displajot tikai tos, kas ir true, kā arī, lai automatiski katru nedēlu parmaina uz false
+	 * Man liekas, ka sita vins nepistos nomainot vārdu, jo mes varetu vienk user doca nomainit. Paldies par uzmanību
 	 */
 	function getNextSaturday() {
 		const now = new Date();
@@ -91,14 +63,20 @@
 
 	const practiceId = getNextSaturday();
 
+	/**
+	 * ok man paradijas ideja. mes varetu useru atrast pec email saraksta un tad nomainit displayName vertibu, bet es negribu
+	 * to darit.
+	 *
+	 * velu veiksmi
+	 */
+
 	async function checkIn() {
 		const practiceRef = doc(collection(db, 'practices'), practiceId);
-        
-        await updateDoc(practiceRef, {
-            
-		    attendees: arrayUnion({ email, displayName })
+
+		await updateDoc(practiceRef, {
+			attendees: arrayUnion({ email, displayName })
 		});
-            
+
 		refreshPage();
 	}
 
@@ -117,25 +95,15 @@
 		const practiceSnap = await getDoc(practiceRef);
 
 		if (practiceSnap.exists()) {
-            console.log('Document found')
+			console.log('Document found');
 			attendees = practiceSnap.data().attendees;
 		} else {
 			console.log('No such document, creating new one');
-            await setDoc(practiceRef, {
-                attendees: []
-		    });
+			await setDoc(practiceRef, {
+				attendees: []
+			});
 		}
 	});
-	//onMount(() => {
-	//	const interval = setInterval(() => {
-	//		time = new Date();
-	//		console.log(time.getMonth());
-	//	}, 1000);
-    //
-	//	return () => {
-	//		clearInterval(interval);
-	//	};
-	//});
 
 	async function goAcc() {
 		window.location.href = '/privatedashboard/account';
