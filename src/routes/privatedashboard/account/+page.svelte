@@ -1,18 +1,13 @@
 <script>
     import { authHandlers, authStore } from '../../../stores/authStore';
-    import { auth, db } from "$lib/firebase/firebase.client";
-
-    
+    import { db } from "$lib/firebase/firebase.client";
 
     import { onMount } from 'svelte';
     import {
 		collection,
 		doc,
 		setDoc,
-		updateDoc,
-		arrayUnion,
 		getDoc,
-		arrayRemove
 	} from 'firebase/firestore';
 
     function refreshPage() {
@@ -53,7 +48,7 @@
 
     async function handleSubmit() {
         alert('Tu esi perfekta tāda kā esi, nevajag mainīt neko <3');
-        //await authHandlers.updateProfile(newDisplayName);
+        await authHandlers.updateProfile(newDisplayName);
 
         //refreshPage();
         
@@ -114,13 +109,13 @@
                 <input type="text" bind:value={newDisplayName} class="w-full p-2 border rounded bg-gray-800 border-gray-700"/>
             </div>
             <div class="flex items-center justify-center">
-                <button type="submit" class="flex justify-center bg-violet-300 hover:bg-violet-500 text-black font-bold py-2 px-4 rounded text-black">
+                <button type="submit" class="block w-full p-3 text-center rounded-sm text-gray-900 bg-violet-300">
                     Mainīt vārdu
                 </button>
             </div>
             <div class="flex items-center justify-center p-3">
                 <button>
-                    <a href="/privatedashboard" class="flex justify-center bg-violet-300 hover:bg-violet-500 text-black font-bold py-2 px-4 rounded text-black">
+                    <a href="/privatedashboard" class="flex justify-center text-xs text-gray-400 cursor-pointer hover:underline">
                         Atpakaļ
                     </a>
                 </button>

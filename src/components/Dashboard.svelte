@@ -29,6 +29,7 @@
 	$: {
 		if (daysTillSaturday < 0) {
 			daysTillSaturday = 6;
+			
 		}
 	}
 
@@ -130,20 +131,24 @@
 			>
 		</div>
 
-		<h2 class="flex items-center justify-center"><strong>Pieteikušies</strong></h2>
+		
 		<div class="flex flex-col items-center justify-center space-y-10">
+			{#if attendees.length !== 0}
+			<h2 class="flex items-center justify-center text-xl">Pieteikušies</h2>
 			<ul class="flex flex-col border rounded border-2 border-gray-100 items-center space-y-2 p-1">
 				{#each attendees as attendee (attendee.email)}
 					<li>{attendee.displayName}</li>
 				{/each}
 			</ul>
+			<p class="text-center">Skaits: {attendees.length}</p>
+			{/if}
 
-			<p class="text-center">Pieteikušies: {attendees.length}</p>
-			<button class="flex items-center justify-center border p-2 w-30 rounded" on:click={goAcc}
+			
+			<button class="block  p-3 text-center rounded-sm text-gray-900 bg-violet-300" on:click={goAcc}
 				>Pārvaldīt kontu</button
 			>
 			<button
-				class="flex items-center justify-center border p-1 w-20 rounded"
+				class="flex justify-center text-xs text-gray-400 cursor-pointer hover:underline"
 				on:click={authHandlers.logout}>Iziet</button
 			>
 		</div>

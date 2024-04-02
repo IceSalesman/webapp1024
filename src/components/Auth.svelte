@@ -69,7 +69,7 @@
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div>
 						<p class="text-xs text-center sm:px-6 text-gray-400">Jau ir konts?
-						
+				
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<a 
 						on:click={() => {
@@ -95,7 +95,8 @@
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div
 						on:click={() => {
-							authHandlers.resetPassword(email)
+							
+							window.location.href = '/resetpass';
 						}}
 						on:keydown={() => {}} 
 						class="flex justify-center text-xs text-gray-400 cursor-pointer hover:underline"
