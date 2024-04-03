@@ -25,7 +25,7 @@
 
 	$: daysTillSaturday = 6 - time.getDay();
 	$: saturdayDate = dd + daysTillSaturday;
-
+	
 	$: {
 		if (daysTillSaturday < 0) {
 			daysTillSaturday = 6;
@@ -40,7 +40,28 @@
 		displayName = curr?.currentUser?.displayName;
 		// @ts-ignore
 		isverified = curr?.currentUser?.emailVerified;
+
+		// @ts-ignore
+		const newDisplayName = curr?.currentUser?.displayName;
+
+		if (displayName !== newDisplayName) {
+			displayName = newDisplayName;
+			updateNameInPracticesDoc(displayName);
+		}
 	});
+
+
+	async function updateNameInPracticesDoc(newName: string) {
+		const practiceRef = doc(collection(db, 'practices'), practiceId);
+		await updateDoc(practiceRef, {
+			attendees: attendees.map((attendee) => {
+				if (attendee.email === email) {
+					return { email, displayName: newName };
+				}
+				return attendee;
+			})
+		});
+	}
 
 	function refreshPage() {
 		window.location.reload();
@@ -51,6 +72,9 @@
 	 * bet labāk ka vins edito docu ar useriem (takā 'comingNextPractice = true/false')
 	 * un tad displajot tikai tos, kas ir true, kā arī, lai automatiski katru nedēlu parmaina uz false
 	 * Man liekas, ka sita vins nepistos nomainot vārdu, jo mes varetu vienk user doca nomainit. Paldies par uzmanību
+	 * 
+	 * 
+	 * nvm es esmu genijs
 	 */
 	function getNextSaturday() {
 		const now = new Date();
@@ -69,6 +93,8 @@
 	 * to darit.
 	 *
 	 * velu veiksmi
+	 * 
+	 * te ari
 	 */
 
 	async function checkIn() {

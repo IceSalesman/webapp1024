@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
     import { authHandlers, authStore } from '../../../stores/authStore';
     import { db } from "$lib/firebase/firebase.client";
 
@@ -8,29 +8,33 @@
 		doc,
 		setDoc,
 		getDoc,
+        updateDoc
 	} from 'firebase/firestore';
 
     function refreshPage() {
 		window.location.reload();
 	}
 
-    // @ts-ignore
-	/**
-	 * @type {any}
-	 */
-	let email;
-	// @ts-ignore
-	/**
-	 * @type {any}
-	 */
-	let displayName;
 
 	/**
 	 * @type {any}
 	 */
-	let isverified;
+	let email: any;
+	
+	/**
+	 * @type {any}
+	 */
+	let displayName: any;
 
-    let attendees = [];
+	/**
+	 * @type {any}
+	 */
+	let isverified: boolean;
+
+    /**
+	 * @type {any[]}
+	 */
+    let attendees: any[] = [];
 	authStore.subscribe((curr) => {
 		console.log('CURR', curr);
 		// @ts-ignore
@@ -39,18 +43,21 @@
         email = curr?.currentUser?.email;
 		// @ts-ignore
         isverified = curr?.currentUser?.emailVerified;
+
+        
 	});
 
     /**
      * @type {string}
      */
-    let newDisplayName = '';
+    let newDisplayName: string = '';
 
     async function handleSubmit() {
-        alert('Tu esi perfekta tāda kā esi, nevajag mainīt neko <3');
+        
         await authHandlers.updateProfile(newDisplayName);
+        await updateNameInPracticesDoc(newDisplayName);
 
-        //refreshPage();
+        refreshPage();
         
 
     }
@@ -66,6 +73,22 @@
 	}
 
 	const practiceId = getNextSaturday();
+
+
+
+
+    async function updateNameInPracticesDoc(newDisplayName: string) {
+		const practiceRef = doc(collection(db, 'practices'), practiceId);
+        console.log('practiceRef', practiceRef)
+		await updateDoc(practiceRef, {
+            attendees: attendees.map((attendee) => {
+                if (attendee.email === email) {
+                    return { email, displayName: newDisplayName };
+                }
+                return attendee;
+            })
+        });
+    }            
 
 
 
