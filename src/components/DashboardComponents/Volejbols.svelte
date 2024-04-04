@@ -2,7 +2,6 @@
 	import { authStore, authHandlers } from '../../stores/authStore';
 	import { dayDict, monthDict } from '../../stores/dictStore';
 	import { db } from '../../lib/firebase/firebase.client';
-	import Navbar from '../Navbar.svelte';
 	import {
 		collection,
 		doc,
@@ -20,6 +19,7 @@
 	let attendees: any[] = [];
 
 	let time = new Date();
+
 
 	$: dd = time.getDate();
 	$: mm = time.getMonth();
@@ -137,7 +137,6 @@
 		window.location.href = '/privatedashboard/account';
 	}
 </script>
-
 
 <main class="bg-gray-800 text-gray-100 flex justify-center items-center h-screen">
 	<div class="w-auto h-auto p-8 space-y-3 bg-gray-900 rounded-lg">

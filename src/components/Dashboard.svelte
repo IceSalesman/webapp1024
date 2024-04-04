@@ -111,10 +111,6 @@
 		}
 	});
 
-	async function goAcc() {
-		window.location.href = '/privatedashboard/account';
-	}
-
 	let activeTab = 'Volejbols';
 
 	function setActiveTab(tab: string) {
@@ -126,6 +122,10 @@
 	function toggleNav() {
 		isNavOpen = !isNavOpen;
 	}
+
+	
+
+	//
 
 	/*
 	 * TODO: safiksot tabus lai vini paliek zili kad ir selectoti :D!
@@ -179,32 +179,40 @@
 				class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 bg-gray-800 md:bg-gray-900 border-gray-700"
 			>
 				<li>
+					<!-- svelte-ignore a11y-invalid-attribute -->
 					<a
 						on:click={() => setActiveTab('Volejbols')}
+						on:click={toggleNav}
 						href=''
 						class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
 						aria-current="page">Volejbols</a
 					>
 				</li>
 				<li>
+					<!-- svelte-ignore a11y-invalid-attribute -->
 					<a
 						on:click={() => setActiveTab('Atminas')}
+						on:click={toggleNav}
 						href=''
 						class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
 						>Atmiņas</a
 					>
 				</li>
 				<li>
+					<!-- svelte-ignore a11y-invalid-attribute -->
 					<a
 						on:click={() => setActiveTab('Konts')}
+						on:click={toggleNav}
 						href=''
 						class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
 						>Konts</a
 					>
 				</li>
 				<li>
+					<!-- svelte-ignore a11y-invalid-attribute -->
 					<a
 						on:click={() => setActiveTab('Kontakti')}
+						on:click={toggleNav}
 						href=''
 						class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
 						>Kontakti</a
@@ -216,17 +224,27 @@
 </nav>
 
 {#if activeTab === 'Volejbols'}
-	<Volejbols />
+	<div class="">
+		<Volejbols />
+	</div>
+	
 {/if}
 
 {#if activeTab === 'Konts'}
+<div class="">
 	<Konts />
+</div>
+
 {/if}
 
 {#if activeTab === 'Atminas'}
-	<Atminas />
+	<div class="">
+		<Atminas />
+	</div>
 {/if}
 
 {#if activeTab === 'Kontakti'}
-	<Kontakti />
+	<div class="">
+		<Kontakti />
+	</div>
 {/if}

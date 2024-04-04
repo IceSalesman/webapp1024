@@ -1,4 +1,6 @@
-
+/**
+ * @type {Record<number, string>}
+ */
 export const dayDict = {
     0: 'rīt (šodien)',
     1: 'rīt (rīt)',
@@ -9,6 +11,9 @@ export const dayDict = {
     6: 'rīt (aiz-aiz-aiz-aizparīt)'
 };
 
+/**
+ * @type {Record<number, string>}
+ */
 export const monthDict = {
     0: 'janvārī',
     1: 'februārī',
