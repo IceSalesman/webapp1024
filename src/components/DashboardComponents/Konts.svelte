@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { authHandlers, authStore } from '../../../stores/authStore';
+    import { authHandlers, authStore } from '../../stores/authStore';
     import { db } from "$lib/firebase/firebase.client";
 
     import { onMount } from 'svelte';
@@ -106,6 +106,8 @@
 		    });
 		}
 	});
+
+    //flex justify-center text-xs text-gray-400 cursor-pointer hover:underline
     
 
 
@@ -137,11 +139,8 @@
                 </button>
             </div>
             <div class="flex items-center justify-center p-3">
-                <button>
-                    <a href="/privatedashboard" class="flex justify-center text-xs text-gray-400 cursor-pointer hover:underline">
-                        Atpakaļ
-                    </a>
-                </button>
+                
+                
                 
             </div>
         

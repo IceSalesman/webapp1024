@@ -2,6 +2,11 @@
 	import { authStore, authHandlers } from '../stores/authStore';
 	import { dayDict, monthDict } from '../stores/dictStore';
 	import { db } from '../lib/firebase/firebase.client';
+	import Volejbols from './DashboardComponents/Volejbols.svelte';
+	import Konts from './DashboardComponents/Konts.svelte';
+	import Atminas from './DashboardComponents/Atminas.svelte';
+	import Kontakti from './DashboardComponents/Kontakti.svelte';
+
 	import {
 		collection,
 		doc,
@@ -25,11 +30,10 @@
 
 	$: daysTillSaturday = 6 - time.getDay();
 	$: saturdayDate = dd + daysTillSaturday;
-	
+
 	$: {
 		if (daysTillSaturday < 0) {
 			daysTillSaturday = 6;
-			
 		}
 	}
 
@@ -50,7 +54,6 @@
 		}
 	});
 
-
 	async function updateNameInPracticesDoc(newName: string) {
 		const practiceRef = doc(collection(db, 'practices'), practiceId);
 		await updateDoc(practiceRef, {
@@ -63,17 +66,13 @@
 		});
 	}
 
-	function refreshPage() {
-		window.location.reload();
-	}
-
 	/**
 	 * Tehniski labāk būtu pārtaisīt tā, ka viņs nevis taisa docu ar cilvēkiem, kas nāk,
 	 * bet labāk ka vins edito docu ar useriem (takā 'comingNextPractice = true/false')
 	 * un tad displajot tikai tos, kas ir true, kā arī, lai automatiski katru nedēlu parmaina uz false
 	 * Man liekas, ka sita vins nepistos nomainot vārdu, jo mes varetu vienk user doca nomainit. Paldies par uzmanību
-	 * 
-	 * 
+	 *
+	 *
 	 * nvm es esmu genijs
 	 */
 	function getNextSaturday() {
@@ -93,29 +92,9 @@
 	 * to darit.
 	 *
 	 * velu veiksmi
-	 * 
+	 *
 	 * te ari
 	 */
-
-	async function checkIn() {
-		const practiceRef = doc(collection(db, 'practices'), practiceId);
-
-		await updateDoc(practiceRef, {
-			attendees: arrayUnion({ email, displayName })
-		});
-
-		refreshPage();
-	}
-
-	async function checkOut() {
-		const practiceRef = doc(collection(db, 'practices'), practiceId);
-
-		await updateDoc(practiceRef, {
-			attendees: arrayRemove({ email, displayName })
-		});
-
-		refreshPage();
-	}
 
 	onMount(async () => {
 		const practiceRef = doc(collection(db, 'practices'), practiceId);
@@ -135,48 +114,119 @@
 	async function goAcc() {
 		window.location.href = '/privatedashboard/account';
 	}
+
+	let activeTab = 'Volejbols';
+
+	function setActiveTab(tab: string) {
+		activeTab = tab;
+	}
+
+	let isNavOpen = false;
+
+	function toggleNav() {
+		isNavOpen = !isNavOpen;
+	}
+
+	/*
+	 * TODO: safiksot tabus lai vini paliek zili kad ir selectoti :D!
+	 */
 </script>
 
-<main class="bg-gray-800 text-gray-100 flex justify-center items-center h-screen">
-	<div class="w-auto h-auto p-8 space-y-3 bg-gray-900 rounded-lg">
-		<div class="h-full flex flex-col justify-center items-center p-1 text-lg">
-			<div class="flex items-center justify-center text-center">
-				<strong
-					>{dayDict[daysTillSaturday]}, {saturdayDate}.{monthDict[mm]}, 18:00(19:00 uz papīriem)
-					<i>mūsu skolas</i> (Ūnijas iela 93) zālē volejbols
-				</strong>
-			</div>
-		</div>
-
-		<div class="flex items-center justify-center space-x-4 p-3">
-			<button class="border rounded bg-green-500 hover:bg-green-400 p-1" on:click={checkIn}
-				>Pieteikties</button
-			>
-			<button class="border rounded bg-red-500 hover:bg-red-400 p-1" on:click={checkOut}
-				>Atteikties</button
-			>
-		</div>
-
-		
-		<div class="flex flex-col items-center justify-center space-y-10">
-			{#if attendees.length !== 0}
-			<h2 class="flex items-center justify-center text-xl">Pieteikušies</h2>
-			<ul class="flex flex-col border rounded border-2 border-gray-100 items-center space-y-2 p-1">
-				{#each attendees as attendee (attendee.email)}
-					<li>{attendee.displayName}</li>
-				{/each}
-			</ul>
-			<p class="text-center">Skaits: {attendees.length}</p>
-			{/if}
-
-			
-			<button class="block  p-3 text-center rounded-sm text-gray-900 bg-violet-300" on:click={goAcc}
-				>Pārvaldīt kontu</button
+<nav class="bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 border-gray-600">
+	<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+		<a href="https://flowbite.com/" class="flex items-center space-x-3 rtl:space-x-reverse">
+			<img src="https://www.svgrepo.com/show/15181/volleyball.svg" class="h-8" alt="Logo" />
+			<span class="self-center text-2xl font-semibold whitespace-nowrap text-white">Volejols</span>
+		</a>
+		<div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+			<button
+				type="button"
+				class="text-white w-20 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
+				>Iziet</button
 			>
 			<button
-				class="flex justify-center text-xs text-gray-400 cursor-pointer hover:underline"
-				on:click={authHandlers.logout}>Iziet</button
+				data-collapse-toggle="navbar-sticky"
+				type="button"
+				class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 text-gray-400 hover:bg-gray-700 focus:ring-gray-600"
+				aria-controls="navbar-sticky"
+				aria-expanded={isNavOpen}
+				on:click={toggleNav}
 			>
+				<span class="sr-only">Open main menu</span>
+				<svg
+					class="w-5 h-5"
+					aria-hidden="true"
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 17 14"
+				>
+					<path
+						stroke="currentColor"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M1 1h15M1 7h15M1 13h15"
+					/>
+				</svg>
+			</button>
+		</div>
+		<div
+			class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
+			id="navbar-sticky"
+			class:hidden={!isNavOpen}
+		>
+			<ul
+				class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 bg-gray-800 md:bg-gray-900 border-gray-700"
+			>
+				<li>
+					<a
+						on:click={() => setActiveTab('Volejbols')}
+						href=''
+						class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
+						aria-current="page">Volejbols</a
+					>
+				</li>
+				<li>
+					<a
+						on:click={() => setActiveTab('Atminas')}
+						href=''
+						class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
+						>Atmiņas</a
+					>
+				</li>
+				<li>
+					<a
+						on:click={() => setActiveTab('Konts')}
+						href=''
+						class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
+						>Konts</a
+					>
+				</li>
+				<li>
+					<a
+						on:click={() => setActiveTab('Kontakti')}
+						href=''
+						class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
+						>Kontakti</a
+					>
+				</li>
+			</ul>
 		</div>
 	</div>
-</main>
+</nav>
+
+{#if activeTab === 'Volejbols'}
+	<Volejbols />
+{/if}
+
+{#if activeTab === 'Konts'}
+	<Konts />
+{/if}
+
+{#if activeTab === 'Atminas'}
+	<Atminas />
+{/if}
+
+{#if activeTab === 'Kontakti'}
+	<Kontakti />
+{/if}
