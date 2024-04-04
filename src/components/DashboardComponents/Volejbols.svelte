@@ -118,6 +118,8 @@
 		refreshPage();
 	}
 
+	let isCheckedIn: boolean;
+
 	onMount(async () => {
 		const practiceRef = doc(collection(db, 'practices'), practiceId);
 		const practiceSnap = await getDoc(practiceRef);
@@ -125,13 +127,34 @@
 		if (practiceSnap.exists()) {
 			console.log('Document found');
 			attendees = practiceSnap.data().attendees;
+			isCheckedIn = attendees.some(attendee => attendee.email === email);
+			//isCheckedIn = !isCheckedIn;
+
+
 		} else {
 			console.log('No such document, creating new one');
 			await setDoc(practiceRef, {
 				attendees: []
 			});
 		}
+		
 	});
+	async function toggleCheckIn() {
+    	const practiceRef = doc(collection(db, 'practices'), practiceId);
+
+		if (isCheckedIn) {
+			await updateDoc(practiceRef, {
+			attendees: arrayRemove({ email, displayName })
+		});
+		} else {
+			await updateDoc(practiceRef, {
+			attendees: arrayUnion({ email, displayName })
+		});
+		}
+
+    isCheckedIn = !isCheckedIn;
+    refreshPage();
+  }
 
 	async function goAcc() {
 		window.location.href = '/privatedashboard/account';
@@ -139,7 +162,7 @@
 </script>
 
 <main class="bg-gray-800 text-gray-100 flex justify-center items-center h-screen">
-	<div class="w-auto h-auto p-8 space-y-3 bg-gray-900 rounded-lg">
+	<div class="w-auto h-auto p-8 space-y-2 bg-gray-900 rounded-lg">
 		<div class="h-full flex flex-col justify-center items-center p-1 text-lg">
 			<div class="flex items-center justify-center text-center">
 				<strong
@@ -149,22 +172,16 @@
 			</div>
 		</div>
 
-		<div class="flex items-center justify-center space-x-4 p-3">
-			<button class="border rounded bg-green-500 hover:bg-green-400 p-1" on:click={checkIn}
-				>Pieteikties</button
-			>
-			<button class="border rounded bg-red-500 hover:bg-red-400 p-1" on:click={checkOut}
-				>Atteikties</button
-			>
-		</div>
-
+		<div class="flex flex-col items-center justify-center space-y-3">
+			<button on:click={toggleCheckIn} class="border rounded {isCheckedIn ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} p-1">{isCheckedIn? 'Atteikties' : 'Pieteikties'}</button>
+			
 		
-		<div class="flex flex-col items-center justify-center space-y-10">
+		<div class="flex flex-col items-center justify-center space-y-3">
 			{#if attendees.length !== 0}
-			<h2 class="flex items-center justify-center text-xl">Pieteikušies</h2>
-			<ul class="flex flex-col border rounded border-2 border-gray-100 items-center space-y-2 p-1">
+			<h2 class="text-center text-xl"><strong>Pieteikušies:</strong></h2>
+			<ul class="flex flex-col rounded items-center space-y-2 p-1">
 				{#each attendees as attendee (attendee.email)}
-					<li>{attendee.displayName}</li>
+					<li>•{attendee.displayName}</li>
 				{/each}
 			</ul>
 			<p class="text-center">Skaits: {attendees.length}</p>

@@ -109,6 +109,7 @@
 				attendees: []
 			});
 		}
+		document.title = 'Volejbols';
 	});
 
 	let activeTab = 'Volejbols';
