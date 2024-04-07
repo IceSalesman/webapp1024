@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { storage } from '$lib/firebase/firebase.client';
 	import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
@@ -25,7 +25,7 @@
 		if (!file) return;
         
         //sitas mesls negrib stradat.
-		const storageRef = ref(storage, `volejbols-832d7.appspot.com/media/${file.name}`);
+		const storageRef = ref(storage, `media/${file.name}`);
 
 		const uploadTask = uploadBytesResumable(storageRef, file);
 
