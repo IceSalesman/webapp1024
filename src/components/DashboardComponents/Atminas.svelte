@@ -15,7 +15,7 @@
 	function handleFileChange(event) {
 		file = event.target.files[0];
 		if (file.size > MAX_FILE_SIZE) {
-			alert('File is too large. Please select a file smaller than 10MB.');
+			alert('Fails ir pārāk liels, limits ir 10MB');
 			file = null;
 		}
 	}
@@ -23,9 +23,10 @@
 	function uploadFile() {
 		// @ts-ignore
 		if (!file) return;
-        console.log(file.name)
+        
+        //sitas mesls negrib stradat.
+		const storageRef = ref(storage, `volejbols-832d7.appspot.com/media/${file.name}`);
 
-		const storageRef = ref(storage, `/${file.name}`);
 		const uploadTask = uploadBytesResumable(storageRef, file);
 
 		uploadTask.on(
@@ -51,7 +52,8 @@
 	}
 </script>
 
-<main class="bg-gray-800 text-gray-100 flex justify-center items-center h-screen">
+<main class="bg-gray-800 text-gray-100 flex flex-col justify-center items-center h-screen">
+    PAŠLAIK NESTRĀDĀ, VARAT MĒGINĀT, BET NEKAS NENOTIKS. 
 	<input type="file" on:change={handleFileChange} />
 	<button on:click={uploadFile}>Upload</button>
 </main>
