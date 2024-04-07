@@ -4,6 +4,8 @@ import { deleteApp, getApp, getApps, initializeApp } from "firebase/app";
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getAuth, setPersistence, inMemoryPersistence } from 'firebase/auth'
 
+import { getStorage } from "@firebase/storage";
+
 import { getFirestore } from "firebase/firestore"
 
 
@@ -30,3 +32,5 @@ if (!getApps().length) {
 export const auth = getAuth(firebaseApp);
 
 export const db = getFirestore(firebaseApp);
+
+export const storage = getStorage(firebaseApp);

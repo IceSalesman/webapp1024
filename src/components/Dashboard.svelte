@@ -2,6 +2,7 @@
 	import { authStore, authHandlers } from '../stores/authStore';
 	import { dayDict, monthDict } from '../stores/dictStore';
 	import { db } from '../lib/firebase/firebase.client';
+	// @ts-ignore
 	import Volejbols from './DashboardComponents/Volejbols.svelte';
 	import Konts from './DashboardComponents/Konts.svelte';
 	import Atminas from './DashboardComponents/Atminas.svelte';
@@ -124,8 +125,6 @@
 		isNavOpen = !isNavOpen;
 	}
 
-	
-
 	//
 
 	/*
@@ -137,7 +136,7 @@
 	<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
 		<a href="/privatedashboard" class="flex items-center space-x-3 rtl:space-x-reverse">
 			<img src="https://www.svgrepo.com/show/15181/volleyball.svg" class="h-8" alt="Logo" />
-			<span class="self-center text-2xl font-semibold whitespace-nowrap text-white">Volejols</span>
+			<span class="self-center text-2xl font-semibold whitespace-nowrap text-white">Volejbols</span>
 		</a>
 		<div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
 			<button
@@ -185,7 +184,7 @@
 					<a
 						on:click={() => setActiveTab('Volejbols')}
 						on:click={toggleNav}
-						href=''
+						href=""
 						class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
 						aria-current="page">Volejbols</a
 					>
@@ -195,7 +194,7 @@
 					<a
 						on:click={() => setActiveTab('Atminas')}
 						on:click={toggleNav}
-						href=''
+						href=""
 						class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
 						>Atmiņas</a
 					>
@@ -205,7 +204,7 @@
 					<a
 						on:click={() => setActiveTab('Konts')}
 						on:click={toggleNav}
-						href=''
+						href=""
 						class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
 						>Konts</a
 					>
@@ -215,7 +214,7 @@
 					<a
 						on:click={() => setActiveTab('Kontakti')}
 						on:click={toggleNav}
-						href=''
+						href=""
 						class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
 						>Kontakti</a
 					>
@@ -229,14 +228,12 @@
 	<div class="">
 		<Volejbols />
 	</div>
-	
 {/if}
 
 {#if activeTab === 'Konts'}
-<div class="">
-	<Konts />
-</div>
-
+	<div class="">
+		<Konts />
+	</div>
 {/if}
 
 {#if activeTab === 'Atminas'}

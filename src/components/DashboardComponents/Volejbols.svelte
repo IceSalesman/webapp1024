@@ -20,7 +20,6 @@
 
 	let time = new Date();
 
-
 	$: dd = time.getDate();
 	$: mm = time.getMonth();
 
@@ -88,35 +87,6 @@
 	}
 
 	const practiceId = getNextSaturday();
-
-	/**
-	 * ok man paradijas ideja. mes varetu useru atrast pec email saraksta un tad nomainit displayName vertibu, bet es negribu
-	 * to darit.
-	 *
-	 * velu veiksmi
-	 * 
-	 * te ari
-	 */
-
-	async function checkIn() {
-		const practiceRef = doc(collection(db, 'practices'), practiceId);
-
-		await updateDoc(practiceRef, {
-			attendees: arrayUnion({ email, displayName })
-		});
-
-		refreshPage();
-	}
-
-	async function checkOut() {
-		const practiceRef = doc(collection(db, 'practices'), practiceId);
-
-		await updateDoc(practiceRef, {
-			attendees: arrayRemove({ email, displayName })
-		});
-
-		refreshPage();
-	}
 
 	let isCheckedIn: boolean;
 

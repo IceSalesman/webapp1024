@@ -39,6 +39,8 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@firebase/auth": "^1.7.0",
+		"@firebase/storage": "^0.12.3",
 		"firebase": "^10.8.1",
 		"svelte-materialify": "^0.3.11"
 	}
