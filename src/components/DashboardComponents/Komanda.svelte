@@ -133,6 +133,7 @@
 	async function addWinToTeam2() {
 		if (teams[1]) {
 			
+			// @ts-ignore
 			teams[1] = await Promise.all(teams[1].map(async (player) => {
 				const playerDocRef = doc(db, 'players', player.email);
 				const playerDoc = await getDoc(playerDocRef);

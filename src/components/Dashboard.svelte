@@ -120,7 +120,6 @@
 		if (practiceSnap.exists()) {
 			console.log('Document found');
 			attendees = practiceSnap.data().attendees;
-
 		} else {
 			console.log('No such document, creating new one');
 			await setDoc(practiceRef, {
@@ -128,13 +127,12 @@
 			});
 		}
 
-		const playerRef = doc(collection(db, 'players'), email)
-		const playerSnap = await getDoc(playerRef)
+		const playerRef = doc(collection(db, 'players'), email);
+		const playerSnap = await getDoc(playerRef);
 
 		if (playerSnap.exists()) {
 			console.log('Document found');
 			players = playerSnap.data().wins;
-			
 		} else {
 			console.log('No such document, creating new one');
 			await setDoc(playerRef, {
@@ -219,16 +217,18 @@
 						class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
 						aria-current="page">Volejbols</a
 					>
-					{#if isAdmin}
-						<!-- svelte-ignore a11y-invalid-attribute -->
-						<a
-							on:click={() => setActiveTab('Komanda')}
-							on:click={toggleNav}
-							href=""
-							class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
-							aria-current="page">Komandas</a
-						>
-					{/if}
+
+					<!-- svelte-ignore a11y-invalid-attribute -->
+				</li>
+				<li>
+					<!-- svelte-ignore a11y-invalid-attribute -->
+					<a
+						on:click={() => setActiveTab('Komandas')}
+						on:click={toggleNav}
+						href=""
+						class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
+						aria-current="page">Komandas</a
+					>
 				</li>
 				<li>
 					<!-- svelte-ignore a11y-invalid-attribute -->
@@ -270,7 +270,7 @@
 		<Volejbols />
 	</div>
 {/if}
-{#if activeTab === 'Komanda'}
+{#if activeTab === 'Komandas'}
 	<div class="">
 		<Komanda />
 	</div>
@@ -292,4 +292,3 @@
 		<Kontakti />
 	</div>
 {/if}
-

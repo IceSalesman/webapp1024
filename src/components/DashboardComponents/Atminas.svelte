@@ -73,6 +73,14 @@
 		);
 	});
 </script>
+<svelte:head>
+	<style>
+		body {
+			background-color: #1f2937; /* bg-gray-800 */
+			color: #f7fafc; /* text-gray-100 */
+		}
+	</style>
+</svelte:head>
 
 <main
 	class="bg-gray-800 text-gray-100 flex flex-col justify-start items-stretch min-h-screen p-4 pt-20"
