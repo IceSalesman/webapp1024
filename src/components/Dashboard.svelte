@@ -220,16 +220,18 @@
 
 					<!-- svelte-ignore a11y-invalid-attribute -->
 				</li>
-				<li>
-					<!-- svelte-ignore a11y-invalid-attribute -->
-					<a
-						on:click={() => setActiveTab('Komandas')}
-						on:click={toggleNav}
-						href=""
-						class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
-						aria-current="page">Komandas</a
-					>
-				</li>
+				{#if isAdmin}
+					<li>
+						<!-- svelte-ignore a11y-invalid-attribute -->
+						<a
+							on:click={() => setActiveTab('Komandas')}
+							on:click={toggleNav}
+							href=""
+							class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
+							aria-current="page">Komandas</a
+						>
+					</li>
+				{/if}
 				<li>
 					<!-- svelte-ignore a11y-invalid-attribute -->
 					<a
@@ -270,10 +272,12 @@
 		<Volejbols />
 	</div>
 {/if}
-{#if activeTab === 'Komandas'}
-	<div class="">
-		<Komanda />
-	</div>
+{#if isAdmin}
+	{#if activeTab === 'Komandas'}
+		<div class="">
+			<Komanda />
+		</div>
+	{/if}
 {/if}
 {#if activeTab === 'Konts'}
 	<div class="">
