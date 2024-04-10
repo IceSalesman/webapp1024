@@ -7,6 +7,8 @@
 	import Konts from './DashboardComponents/Konts.svelte';
 	import Atminas from './DashboardComponents/Atminas.svelte';
 	import Kontakti from './DashboardComponents/Kontakti.svelte';
+	// @ts-ignore
+	import Komanda from './DashboardComponents/Komanda.svelte';
 
 	import {
 		collection,
@@ -22,7 +24,10 @@
 	let email: any;
 	let displayName: any;
 	let isverified: any;
+	let uid: any;
 	let attendees: any[] = [];
+	let players: any[] = [];
+	let isAdmin = false;
 
 	let time = new Date();
 
@@ -38,13 +43,15 @@
 		}
 	}
 
-	authStore.subscribe((curr) => {
+	authStore.subscribe(async (curr) => {
 		// @ts-ignore
 		email = curr?.currentUser?.email;
 		// @ts-ignore
 		displayName = curr?.currentUser?.displayName;
 		// @ts-ignore
 		isverified = curr?.currentUser?.emailVerified;
+		// @ts-ignore
+		uid = curr?.currentUser?.uid;
 
 		// @ts-ignore
 		const newDisplayName = curr?.currentUser?.displayName;
@@ -52,6 +59,15 @@
 		if (displayName !== newDisplayName) {
 			displayName = newDisplayName;
 			updateNameInPracticesDoc(displayName);
+		}
+
+		const adminRef = doc(db, 'admins', uid);
+		const adminDocSnapshot = await getDoc(adminRef);
+
+		if (adminDocSnapshot.exists()) {
+			isAdmin = true;
+		} else {
+			isAdmin = false;
 		}
 	});
 
@@ -86,7 +102,7 @@
 		return nextSaturday.toISOString().split('T')[0];
 	}
 
-	const practiceId = getNextSaturday();
+	export const practiceId = getNextSaturday();
 
 	/**
 	 * ok man paradijas ideja. mes varetu useru atrast pec email saraksta un tad nomainit displayName vertibu, bet es negribu
@@ -104,12 +120,28 @@
 		if (practiceSnap.exists()) {
 			console.log('Document found');
 			attendees = practiceSnap.data().attendees;
+
 		} else {
 			console.log('No such document, creating new one');
 			await setDoc(practiceRef, {
 				attendees: []
 			});
 		}
+
+		const playerRef = doc(collection(db, 'players'), email)
+		const playerSnap = await getDoc(playerRef)
+
+		if (playerSnap.exists()) {
+			console.log('Document found');
+			players = playerSnap.data().wins;
+			
+		} else {
+			console.log('No such document, creating new one');
+			await setDoc(playerRef, {
+				wins: 0
+			});
+		}
+
 		document.title = 'Volejbols';
 	});
 
@@ -117,6 +149,7 @@
 
 	function setActiveTab(tab: string) {
 		activeTab = tab;
+		document.title = tab;
 	}
 
 	let isNavOpen = false;
@@ -124,8 +157,6 @@
 	function toggleNav() {
 		isNavOpen = !isNavOpen;
 	}
-
-	//
 
 	/*
 	 * TODO: safiksot tabus lai vini paliek zili kad ir selectoti :D!
@@ -188,6 +219,16 @@
 						class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
 						aria-current="page">Volejbols</a
 					>
+					{#if isAdmin}
+						<!-- svelte-ignore a11y-invalid-attribute -->
+						<a
+							on:click={() => setActiveTab('Komanda')}
+							on:click={toggleNav}
+							href=""
+							class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
+							aria-current="page">Komandas</a
+						>
+					{/if}
 				</li>
 				<li>
 					<!-- svelte-ignore a11y-invalid-attribute -->
@@ -229,7 +270,11 @@
 		<Volejbols />
 	</div>
 {/if}
-
+{#if activeTab === 'Komanda'}
+	<div class="">
+		<Komanda />
+	</div>
+{/if}
 {#if activeTab === 'Konts'}
 	<div class="">
 		<Konts />
@@ -247,3 +292,4 @@
 		<Kontakti />
 	</div>
 {/if}
+

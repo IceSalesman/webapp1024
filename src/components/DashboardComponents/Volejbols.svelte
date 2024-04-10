@@ -86,7 +86,7 @@
 		return nextSaturday.toISOString().split('T')[0];
 	}
 
-	const practiceId = getNextSaturday();
+	export const practiceId = getNextSaturday();
 
 	let isCheckedIn: boolean;
 
@@ -98,7 +98,7 @@
 			console.log('Document found');
 			attendees = practiceSnap.data().attendees;
 			isCheckedIn = attendees.some(attendee => attendee.email === email);
-			//isCheckedIn = !isCheckedIn;
+			
 
 
 		} else {
@@ -119,6 +119,7 @@
 		} else {
 			await updateDoc(practiceRef, {
 			attendees: arrayUnion({ email, displayName })
+			
 		});
 		}
 

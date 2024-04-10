@@ -106,8 +106,6 @@
 		    });
 		}
 	});
-
-    //flex justify-center text-xs text-gray-400 cursor-pointer hover:underline
     
 
 

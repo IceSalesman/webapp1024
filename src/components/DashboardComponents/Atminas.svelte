@@ -54,7 +54,7 @@
 				});
 			}
 		);
-		window.location.reload();
+		
 	}
 
 	let fileInput: HTMLInputElement;
