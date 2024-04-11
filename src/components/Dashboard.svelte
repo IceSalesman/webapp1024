@@ -35,7 +35,7 @@
 	$: mm = time.getMonth();
 
 	$: daysTillSaturday = 6 - time.getDay();
-	$: saturdayDate = dd + daysTillSaturday;
+
 
 	$: {
 		if (daysTillSaturday < 0) {
@@ -83,15 +83,8 @@
 		});
 	}
 
-	/**
-	 * Tehniski labāk būtu pārtaisīt tā, ka viņs nevis taisa docu ar cilvēkiem, kas nāk,
-	 * bet labāk ka vins edito docu ar useriem (takā 'comingNextPractice = true/false')
-	 * un tad displajot tikai tos, kas ir true, kā arī, lai automatiski katru nedēlu parmaina uz false
-	 * Man liekas, ka sita vins nepistos nomainot vārdu, jo mes varetu vienk user doca nomainit. Paldies par uzmanību
-	 *
-	 *
-	 * nvm es esmu genijs
-	 */
+
+
 	function getNextSaturday() {
 		const now = new Date();
 		const nextSaturday = new Date(
@@ -104,14 +97,6 @@
 
 	export const practiceId = getNextSaturday();
 
-	/**
-	 * ok man paradijas ideja. mes varetu useru atrast pec email saraksta un tad nomainit displayName vertibu, bet es negribu
-	 * to darit.
-	 *
-	 * velu veiksmi
-	 *
-	 * te ari
-	 */
 
 	onMount(async () => {
 		const practiceRef = doc(collection(db, 'practices'), practiceId);
@@ -136,7 +121,10 @@
 		} else {
 			console.log('No such document, creating new one');
 			await setDoc(playerRef, {
-				wins: 0
+				displayName: displayName,
+				wins: 0,
+				losses: 0,
+				winLossRate: 0.0
 			});
 		}
 

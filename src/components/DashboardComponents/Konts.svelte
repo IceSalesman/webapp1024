@@ -88,6 +88,11 @@
                 return attendee;
             })
         });
+
+        const playerRef = doc(collection(db, 'players'), email);
+        await updateDoc(playerRef, {
+            displayName: newDisplayName
+        });
     }            
 
 

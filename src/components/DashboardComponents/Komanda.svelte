@@ -1,22 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
-	// @ts-ignore
 	import { onAuthStateChanged } from '@firebase/auth';
-	// @ts-ignore
 	import { db, auth } from '$lib/firebase/firebase.client';
-	import {
-		collection,
-		doc,
-		setDoc,
-		updateDoc,
-		// @ts-ignore
-		// @ts-ignore
-		arrayUnion,
-		getDoc,
-		// @ts-ignore
-		// @ts-ignore
-		arrayRemove
-	} from 'firebase/firestore';
+	import { collection, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 	import { authStore } from '../../stores/authStore';
 
 	/**
@@ -61,9 +47,7 @@
 		console.log(playerRef);
 		const playerSnap = await getDoc(playerRef);
 
-		if (playerSnap.exists()) {
-			playerWins = playerSnap.data().wins;
-		}
+		
 
 		const practiceRef = doc(collection(db, 'practices'), practiceId);
 		const practiceSnap = await getDoc(practiceRef);
@@ -71,6 +55,7 @@
 		if (practiceSnap.exists()) {
 			console.log('Document found');
 			attendees = practiceSnap.data().attendees;
+			console.log(attendees);
 		}
 		teamMaker();
 	});
@@ -102,7 +87,8 @@
 					return {
 						// @ts-ignore
 						...player,
-						wins: playerData ? playerData.wins : 0
+						wins: playerData ? playerData.wins : 0,
+						losses: playerData ? playerData.losses : 0
 					};
 				})
 			);
@@ -112,40 +98,48 @@
 		console.log(newTeams);
 		teams = newTeams;
 	}
-	async function addWinToTeam1() {
-		if (teams[0]) {
-            // @ts-ignore
-			teams[0] = await Promise.all(teams[0].map(async (player) => {
-				const playerDocRef = doc(db, 'players', player.email);
-				const playerDoc = await getDoc(playerDocRef);
-				const playerData = playerDoc.data();
-				const updatedWins = playerData ? playerData.wins + 1 : 1;
-				if (playerDoc.exists()) {
-					await updateDoc(playerDocRef, { wins: updatedWins });
-				} else {
-					await setDoc(playerDocRef, { wins: updatedWins });
-				}
-				return { ...player, wins: updatedWins };
-			}));
-		}
-	}
+	/**
+	 * @param {number} winningTeamIndex
+	 */
+	async function updateWinsAndLosses(winningTeamIndex) {
+		const losingTeamIndex = winningTeamIndex === 0 ? 1 : 0;
 
-	async function addWinToTeam2() {
-		if (teams[1]) {
-			
-			// @ts-ignore
-			teams[1] = await Promise.all(teams[1].map(async (player) => {
-				const playerDocRef = doc(db, 'players', player.email);
-				const playerDoc = await getDoc(playerDocRef);
-				const playerData = playerDoc.data();
-				const updatedWins = playerData ? playerData.wins + 1 : 1;
-				if (playerDoc.exists()) {
-					await updateDoc(playerDocRef, { wins: updatedWins });
-				} else {
-					await setDoc(playerDocRef, { wins: updatedWins });
-				}
-				return { ...player, wins: updatedWins };
-			}));
+		if (teams[winningTeamIndex]) {
+			teams[winningTeamIndex] = await Promise.all(
+				// @ts-ignore
+				teams[winningTeamIndex].map(async (player) => {
+					const playerDocRef = doc(db, 'players', player.email);
+					const playerDoc = await getDoc(playerDocRef);
+					const playerData = playerDoc.data();
+					const currentWins = playerData && playerData.wins ? playerData.wins : 0;
+					const updatedWins = currentWins + 1;
+					if (playerDoc.exists()) {
+						await updateDoc(playerDocRef, { wins: updatedWins });
+					} else {
+						await setDoc(playerDocRef, { wins: updatedWins });
+					}
+					return { ...player, wins: updatedWins };
+				})
+			);
+		}
+
+		if (teams[losingTeamIndex]) {
+			teams[losingTeamIndex] = await Promise.all(
+				// @ts-ignore
+				teams[losingTeamIndex].map(async (player) => {
+					const playerDocRef = doc(db, 'players', player.email);
+					const playerDoc = await getDoc(playerDocRef);
+					const playerData = playerDoc.data();
+					const currentLosses = playerData && playerData.losses ? playerData.losses : 0;
+					const updatedLosses = currentLosses + 1;
+					if (playerDoc.exists()) {
+						await updateDoc(playerDocRef, { losses: updatedLosses });
+					} else {
+						await setDoc(playerDocRef, { losses: updatedLosses });
+					}
+					return { ...player, losses: updatedLosses };
+				})
+			);
 		}
 	}
 </script>
@@ -186,7 +180,10 @@
 												>Vārds</th
 											>
 											<th scope="col" class="text-sm font-medium text-gray-100 px-6 py-4 text-left"
-												>Uzvaras</th
+												>W</th
+											>
+											<th scope="col" class="text-sm font-medium text-gray-100 px-6 py-4 text-left"
+												>L</th
 											>
 										</tr>
 									</thead>
@@ -198,6 +195,7 @@
 													>{player.displayName}</td
 												>
 												<td>{player.wins}</td>
+												<td>{player.losses}</td>
 											</tr>
 										{/each}
 									</tbody>
@@ -206,13 +204,13 @@
 							{#if i === 0}
 								<button
 									class="block p-3 text-center rounded-sm text-gray-900 bg-violet-300"
-									on:click={addWinToTeam1}>Pievienot uzvaru</button
+									on:click={() => updateWinsAndLosses(0)}>Pievienot uzvaru 1. komandai</button
 								>
 							{/if}
 							{#if i === 1}
 								<button
 									class="block p-3 text-center rounded-sm text-gray-900 bg-violet-300"
-									on:click={addWinToTeam2}>Pievienot uzvaru</button
+									on:click={() => updateWinsAndLosses(1)}>Pievienot uzvaru 2. komandai</button
 								>
 							{/if}
 						</div>
