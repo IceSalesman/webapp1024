@@ -9,7 +9,8 @@
 		updateDoc,
 		arrayUnion,
 		getDoc,
-		arrayRemove
+		arrayRemove,
+		getDocs
 	} from 'firebase/firestore';
 	import { onMount } from 'svelte';
 
@@ -18,7 +19,7 @@
 	let isverified: any;
 	let attendees: any[] = [];
 
-	let playerData: any;
+	let playerData: any = {};
 
 	let time = new Date();
 
@@ -27,8 +28,6 @@
 
 	$: daysTillSaturday = 6 - time.getDay();
 	$: saturdayDate = dd + daysTillSaturday;
-
-
 
 	let isAdmin = false;
 	let uid: any;
@@ -111,15 +110,14 @@
 			});
 		}
 
-		const playerRef = doc(collection(db, 'players'), email);
-		const playerSnap = await getDoc(playerRef);
+		const playerCollectionRef = collection(db, 'players');
+		const playerSnapshots = await getDocs(playerCollectionRef);
 
-		if (playerSnap.exists()) {
-			console.log('Document found');
-			playerData = playerSnap.data();
-			console.log(playerData);
-		}
+		playerData = playerSnapshots.docs.map((doc) => doc.data());
+
+		console.log(playerData);
 	});
+
 	async function toggleCheckIn() {
 		const practiceRef = doc(collection(db, 'practices'), practiceId);
 
@@ -136,6 +134,8 @@
 		isCheckedIn = !isCheckedIn;
 		refreshPage();
 	}
+
+	let rowNumber = 0;
 </script>
 
 <svelte:head>
@@ -184,48 +184,60 @@
 				</div>
 			</div>
 		</div>
-		{#if isAdmin}
-		
-		
+
 		<div class="flex flex-col">
 			<h1 class="text-2xl text-center font-bold">Līderi</h1>
 			<table class="m-2 flex-shrink-0">
 				<thead class="border-b">
-					<tr>
-						<th scope="col" class="text-sm font-medium text-gray-100 px-6 py-4 text-left">#</th>
-						<th scope="col" class="text-sm font-medium text-gray-100 px-6 py-4 text-left">Vārds</th>
-						<th scope="col" class="text-sm font-medium text-gray-100 px-6 py-4 text-left">W</th>
-						<th scope="col" class="text-sm font-medium text-gray-100 px-6 py-4 text-left">L</th>
-						<th scope="col" class="text-sm font-medium text-gray-100 px-6 py-4 text-left">W/L</th>
+					<tr class="text-center">
+						<th
+							scope="col"
+							class="text-sm font-medium text-gray-100 text-center px-6 py-4 text-left">#</th
+						>
+						<th
+							scope="col"
+							class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left">Vārds</th
+						>
+						<th
+							scope="col"
+							class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left">W</th
+						>
+						<th
+							scope="col"
+							class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left">L</th
+						>
+						<th
+							scope="col"
+							class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left">W/L</th
+						>
 					</tr>
 				</thead>
 				<tbody>
-					
-						<tr class="border-b text-center">
-							<td></td>
-							<td class="text-sm text-gray-100 font-light px-6 py-4 whitespace-nowrap"></td>
-							<td></td>
-							<td></td>
-							<td></td>
-						</tr>
-					
-					<tr class="border-b text-center">
-						<td></td>
-						<td class="text-sm text-gray-100 font-light px-6 py-4 whitespace-nowrap"></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr class="border-b text-center">
-						<td>1</td>
-						<td class="text-sm text-gray-100 font-light px-6 py-4 whitespace-nowrap">Jānis</td>
-						<td>5</td>
-						<td>0</td>
-						<td></td>
-					</tr>
+					{#if Array.isArray(playerData)}
+						{#each playerData
+							.filter((player) => player.displayName !== 'big bazongas')
+							.sort((a, b) => b.wins / (b.losses || 1) - a.wins / (a.losses || 1)) as player, i (player.displayName)}
+							{#if player.displayName !== 'big bazongas'}
+								<tr class="border-b text-center">
+									<td>{i + 1}</td>
+									<td class="text-sm text-gray-100 font-light px-6 py-4 whitespace-nowrap"
+										>{player.displayName}</td
+									>
+									<td>{player.wins}</td>
+									<td>{player.losses}</td>
+									<td>{player.losses === 0 ? '0.0' : (player.wins / player.losses).toFixed(1)}</td>
+								</tr>
+							{/if}
+						{/each}
+					{/if}
 				</tbody>
 			</table>
 		</div>
-		{/if}
 	</div>
 </main>
+
+<style>
+	tr:nth-child(even) {
+		background-color: #1a202c;
+	}
+</style>

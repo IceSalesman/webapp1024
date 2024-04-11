@@ -47,8 +47,6 @@
 		console.log(playerRef);
 		const playerSnap = await getDoc(playerRef);
 
-		
-
 		const practiceRef = doc(collection(db, 'practices'), practiceId);
 		const practiceSnap = await getDoc(practiceRef);
 
@@ -114,9 +112,10 @@
 					const currentWins = playerData && playerData.wins ? playerData.wins : 0;
 					const updatedWins = currentWins + 1;
 					if (playerDoc.exists()) {
-						await updateDoc(playerDocRef, { wins: updatedWins });
+						// @ts-ignore
+						await updateDoc(playerDocRef, { wins: updatedWins }, { merge: true });
 					} else {
-						await setDoc(playerDocRef, { wins: updatedWins });
+						await setDoc(playerDocRef, { wins: updatedWins }, { merge: true });
 					}
 					return { ...player, wins: updatedWins };
 				})
@@ -133,9 +132,10 @@
 					const currentLosses = playerData && playerData.losses ? playerData.losses : 0;
 					const updatedLosses = currentLosses + 1;
 					if (playerDoc.exists()) {
-						await updateDoc(playerDocRef, { losses: updatedLosses });
+						// @ts-ignore
+						await updateDoc(playerDocRef, { losses: updatedLosses }, { merge: true });
 					} else {
-						await setDoc(playerDocRef, { losses: updatedLosses });
+						await setDoc(playerDocRef, { losses: updatedLosses }, { merge: true });
 					}
 					return { ...player, losses: updatedLosses };
 				})
