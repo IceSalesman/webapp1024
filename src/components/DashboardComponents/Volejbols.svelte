@@ -148,7 +148,7 @@
 </svelte:head>
 
 <main
-	class="bg-gray-800 text-gray-100 flex justify-center items-start min-h-screen p-4 pt-20"
+	class="bg-gray-800 text-gray-100 flex justify-center items-start min-h-screen p-4 pt-20 flex-wrap"
 	style="height: calc(100vh - 5rem);"
 >
 	<div class="flex-col flex space-y-10">
