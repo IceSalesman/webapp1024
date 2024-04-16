@@ -124,7 +124,8 @@
 				displayName: displayName,
 				wins: 0,
 				losses: 0,
-				winLossRate: 0.0
+				playerElo: 1200,
+				winLossRate: 0
 			});
 		}
 

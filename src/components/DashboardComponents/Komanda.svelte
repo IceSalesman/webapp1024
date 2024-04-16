@@ -12,6 +12,8 @@
 	let displayName;
 	let isverified;
 	let uid;
+
+	let playerElo;
 	/**
 	 * @type {never[]}
 	 */
@@ -43,10 +45,6 @@
 	const practiceId = getNextSaturday();
 
 	onMount(async () => {
-		const playerRef = doc(collection(db, 'players'), email);
-		console.log(playerRef);
-		const playerSnap = await getDoc(playerRef);
-
 		const practiceRef = doc(collection(db, 'practices'), practiceId);
 		const practiceSnap = await getDoc(practiceRef);
 
@@ -86,7 +84,8 @@
 						// @ts-ignore
 						...player,
 						wins: playerData ? playerData.wins : 0,
-						losses: playerData ? playerData.losses : 0
+						losses: playerData ? playerData.losses : 0,
+						playerElo: playerData ? playerData.playerElo : 1200
 					};
 				})
 			);
@@ -95,6 +94,9 @@
 
 		console.log(newTeams);
 		teams = newTeams;
+
+		const avgEloRatings = calculateAvgElo();
+		console.log(avgEloRatings);
 	}
 	/**
 	 * @param {number} winningTeamIndex
@@ -111,6 +113,8 @@
 					const playerData = playerDoc.data();
 					const currentWins = playerData && playerData.wins ? playerData.wins : 0;
 					const updatedWins = currentWins + 1;
+					const currentElo = playerData ? playerData.playerElo : 1200;
+
 					if (playerDoc.exists()) {
 						// @ts-ignore
 						await updateDoc(playerDocRef, { wins: updatedWins }, { merge: true });
@@ -141,6 +145,62 @@
 				})
 			);
 		}
+		await calculateEloGain(winningTeamIndex);
+	}
+
+	async function calculateAvgElo() {
+		return teams.map((team) => {
+			const totalElo = team.reduce((sum, player) => sum + player.playerElo, 0);
+			return totalElo / team.length;
+		});
+	}
+
+	async function removePlayer(playerEmail) {
+		const index = attendees.findIndex((player) => player.email === playerEmail);
+		if (index !== -1) {
+			attendees.splice(index, 1);
+			// Update the teams after removing the player
+			await teamMaker();
+
+			// Update the attendees in Firestore
+			const practiceRef = doc(collection(db, 'practices'), practiceId);
+			await updateDoc(practiceRef, { attendees });
+		}
+	}
+	async function calculateEloGain(winningTeamIndex) {
+		const losingTeamIndex = winningTeamIndex === 0 ? 1 : 0;
+		const avgEloRatings = calculateAvgElo();
+		const K = 32; // K-factor in Elo rating system
+
+		// Calculate Elo gain for winning team
+		teams[winningTeamIndex] = await Promise.all(
+			teams[winningTeamIndex].map(async (player) => {
+				const expectedScore =
+					1 / (1 + Math.pow(10, (avgEloRatings[losingTeamIndex] - player.playerElo) / 400));
+				const newElo = player.playerElo + K * (1 - expectedScore);
+
+				// Update playerElo in Firestore
+				const playerDocRef = doc(db, 'players', player.email);
+				await updateDoc(playerDocRef, { playerElo: newElo }, { merge: true });
+
+				return { ...player, playerElo: newElo };
+			})
+		);
+
+		// Calculate Elo gain for losing team
+		teams[losingTeamIndex] = await Promise.all(
+			teams[losingTeamIndex].map(async (player) => {
+				const expectedScore =
+					1 / (1 + Math.pow(10, (avgEloRatings[winningTeamIndex] - player.playerElo) / 400));
+				const newElo = player.playerElo + K * (0 - expectedScore);
+
+				// Update playerElo in Firestore
+				const playerDocRef = doc(db, 'players', player.email);
+				await updateDoc(playerDocRef, { playerElo: newElo }, { merge: true });
+
+				return { ...player, playerElo: newElo };
+			})
+		);
 	}
 </script>
 
@@ -196,6 +256,12 @@
 												>
 												<td>{player.wins}</td>
 												<td>{player.losses}</td>
+												<td>
+													<button
+														class="block p-3 text-center rounded-sm text-gray-900 bg-violet-300"
+														on:click={() => removePlayer(player.email)}>Remove</button
+													>
+												</td>
 											</tr>
 										{/each}
 									</tbody>

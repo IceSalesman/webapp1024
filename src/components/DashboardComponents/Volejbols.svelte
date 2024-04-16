@@ -210,8 +210,14 @@
 							scope="col"
 							class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left">W/L</th
 						>
-					</tr>
-				</thead>
+						<th
+							scope="col"
+							class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
+						>
+							ELO</th
+						>
+					</tr></thead
+				>
 				<tbody>
 					{#if Array.isArray(playerData)}
 						{#each playerData
@@ -225,7 +231,14 @@
 									>
 									<td>{player.wins}</td>
 									<td>{player.losses}</td>
-									<td>{player.losses === 0 ? '0.0' : (player.wins / player.losses).toFixed(1)}</td>
+									<td
+										>{player.losses === 0
+											? player.wins.toFixed(1)
+											: (player.wins / player.losses).toFixed(1)}</td
+									>
+									<td>
+										{player.playerElo}
+									</td>
 								</tr>
 							{/if}
 						{/each}
