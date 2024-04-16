@@ -1,8 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
+	// @ts-ignore
 	import { onAuthStateChanged } from '@firebase/auth';
+	// @ts-ignore
 	import { db, auth } from '$lib/firebase/firebase.client';
-	import { collection, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
+	import { collection, doc, setDoc, updateDoc, getDoc, getDocs } from 'firebase/firestore';
 	import { authStore } from '../../stores/authStore';
 
 	/**
@@ -13,12 +15,14 @@
 	let isverified;
 	let uid;
 
+	// @ts-ignore
 	let playerElo;
 	/**
 	 * @type {never[]}
 	 */
 	let attendees = [];
 
+	// @ts-ignore
 	let playerWins;
 
 	authStore.subscribe(async (curr) => {
@@ -113,6 +117,7 @@
 					const playerData = playerDoc.data();
 					const currentWins = playerData && playerData.wins ? playerData.wins : 0;
 					const updatedWins = currentWins + 1;
+					// @ts-ignore
 					const currentElo = playerData ? playerData.playerElo : 1200;
 
 					if (playerDoc.exists()) {
@@ -150,12 +155,15 @@
 
 	async function calculateAvgElo() {
 		return teams.map((team) => {
+			// @ts-ignore
 			const totalElo = team.reduce((sum, player) => sum + player.playerElo, 0);
 			return totalElo / team.length;
 		});
 	}
 
+	// @ts-ignore
 	async function removePlayer(playerEmail) {
+		// @ts-ignore
 		const index = attendees.findIndex((player) => player.email === playerEmail);
 		if (index !== -1) {
 			attendees.splice(index, 1);
@@ -167,13 +175,15 @@
 			await updateDoc(practiceRef, { attendees });
 		}
 	}
+	// @ts-ignore
 	async function calculateEloGain(winningTeamIndex) {
 		const losingTeamIndex = winningTeamIndex === 0 ? 1 : 0;
-		const avgEloRatings = calculateAvgElo();
+		const avgEloRatings = await calculateAvgElo();
 		const K = 32; // K-factor in Elo rating system
 
 		// Calculate Elo gain for winning team
 		teams[winningTeamIndex] = await Promise.all(
+			// @ts-ignore
 			teams[winningTeamIndex].map(async (player) => {
 				const expectedScore =
 					1 / (1 + Math.pow(10, (avgEloRatings[losingTeamIndex] - player.playerElo) / 400));
@@ -181,6 +191,7 @@
 
 				// Update playerElo in Firestore
 				const playerDocRef = doc(db, 'players', player.email);
+				// @ts-ignore
 				await updateDoc(playerDocRef, { playerElo: newElo }, { merge: true });
 
 				return { ...player, playerElo: newElo };
@@ -189,6 +200,7 @@
 
 		// Calculate Elo gain for losing team
 		teams[losingTeamIndex] = await Promise.all(
+			// @ts-ignore
 			teams[losingTeamIndex].map(async (player) => {
 				const expectedScore =
 					1 / (1 + Math.pow(10, (avgEloRatings[winningTeamIndex] - player.playerElo) / 400));
@@ -196,11 +208,22 @@
 
 				// Update playerElo in Firestore
 				const playerDocRef = doc(db, 'players', player.email);
+				// @ts-ignore
 				await updateDoc(playerDocRef, { playerElo: newElo }, { merge: true });
 
 				return { ...player, playerElo: newElo };
 			})
 		);
+	}
+
+	async function resetElo() {
+		const playersCollectionRef = collection(db, 'players');
+		const playersSnapshot = await getDocs(playersCollectionRef);
+
+		playersSnapshot.forEach(async (playerDoc) => {
+			const playerDocRef = doc(db, 'players', playerDoc.id);
+			await updateDoc(playerDocRef, { playerElo: 1200 });
+		});
 	}
 </script>
 
@@ -214,8 +237,8 @@
 </svelte:head>
 
 <main
-	class="bg-gray-800 text-gray-100 flex flex-row justify-center items-center h-full p-4 pt-20"
-	style="height: calc(100vh - 5rem);"
+    class="bg-gray-800 text-gray-100 flex flex-row justify-center items-center h-full p-4 pt-20 sm:pt-32"
+    style="height: calc(100vh - 5rem);"
 >
 	<div class="flex flex-row flex-wrap justify-center">
 		<div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -245,6 +268,9 @@
 											<th scope="col" class="text-sm font-medium text-gray-100 px-6 py-4 text-left"
 												>L</th
 											>
+											<th scope="col" class="text-sm font-medium text-gray-100 px-6 py-4 text-left"
+												>Reitings</th
+											>
 										</tr>
 									</thead>
 									<tbody>
@@ -256,6 +282,8 @@
 												>
 												<td>{player.wins}</td>
 												<td>{player.losses}</td>
+
+												<td>{player.playerElo}</td>
 												<td>
 													<button
 														class="block p-3 text-center rounded-sm text-gray-900 bg-violet-300"

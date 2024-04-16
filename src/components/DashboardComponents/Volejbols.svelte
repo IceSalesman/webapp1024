@@ -222,7 +222,7 @@
 					{#if Array.isArray(playerData)}
 						{#each playerData
 							.filter((player) => player.displayName !== 'big bazongas')
-							.sort((a, b) => b.wins / (b.losses || 1) - a.wins / (a.losses || 1)) as player, i (player.displayName)}
+							.sort((a, b) => b.playerElo - a.playerElo) as player, i (player.displayName)}
 							{#if player.displayName !== 'big bazongas'}
 								<tr class="border-b text-center">
 									<td>{i + 1}</td>
@@ -236,9 +236,7 @@
 											? player.wins.toFixed(1)
 											: (player.wins / player.losses).toFixed(1)}</td
 									>
-									<td>
-										{player.playerElo}
-									</td>
+									<td>{player.playerElo.toFixed(0)}</td>
 								</tr>
 							{/if}
 						{/each}
