@@ -214,7 +214,7 @@
 							scope="col"
 							class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
 						>
-							ELO</th
+							Reitings</th
 						>
 					</tr></thead
 				>

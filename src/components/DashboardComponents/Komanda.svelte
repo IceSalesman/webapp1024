@@ -15,15 +15,10 @@
 	let isverified;
 	let uid;
 
-	// @ts-ignore
-	let playerElo;
 	/**
 	 * @type {never[]}
 	 */
 	let attendees = [];
-
-	// @ts-ignore
-	let playerWins;
 
 	authStore.subscribe(async (curr) => {
 		// @ts-ignore
@@ -118,7 +113,6 @@
 					const currentWins = playerData && playerData.wins ? playerData.wins : 0;
 					const updatedWins = currentWins + 1;
 					// @ts-ignore
-					const currentElo = playerData ? playerData.playerElo : 1200;
 
 					if (playerDoc.exists()) {
 						// @ts-ignore
@@ -237,8 +231,8 @@
 </svelte:head>
 
 <main
-    class="bg-gray-800 text-gray-100 flex flex-row justify-center items-center h-full p-4 pt-20 sm:pt-32"
-    style="height: calc(100vh - 5rem);"
+	class="bg-gray-800 text-gray-100 flex flex-row justify-center items-center h-full p-4 pt-20 sm:pt-32"
+	style="height: calc(100vh - 5rem);"
 >
 	<div class="flex flex-row flex-wrap justify-center">
 		<div class="overflow-x-auto sm:-mx-6 lg:-mx-8">

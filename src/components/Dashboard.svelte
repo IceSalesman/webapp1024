@@ -10,15 +10,7 @@
 	// @ts-ignore
 	import Komanda from './DashboardComponents/Komanda.svelte';
 
-	import {
-		collection,
-		doc,
-		setDoc,
-		updateDoc,
-		arrayUnion,
-		getDoc,
-		arrayRemove
-	} from 'firebase/firestore';
+	import { collection, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 	import { onMount } from 'svelte';
 
 	let email: any;
@@ -35,7 +27,6 @@
 	$: mm = time.getMonth();
 
 	$: daysTillSaturday = 6 - time.getDay();
-
 
 	$: {
 		if (daysTillSaturday < 0) {
@@ -83,8 +74,6 @@
 		});
 	}
 
-
-
 	function getNextSaturday() {
 		const now = new Date();
 		const nextSaturday = new Date(
@@ -96,7 +85,6 @@
 	}
 
 	export const practiceId = getNextSaturday();
-
 
 	onMount(async () => {
 		const practiceRef = doc(collection(db, 'practices'), practiceId);
@@ -144,10 +132,6 @@
 	function toggleNav() {
 		isNavOpen = !isNavOpen;
 	}
-
-	/*
-	 * TODO: safiksot tabus lai vini paliek zili kad ir selectoti :D!
-	 */
 </script>
 
 <nav class="bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 border-gray-600">
