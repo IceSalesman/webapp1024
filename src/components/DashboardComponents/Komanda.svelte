@@ -161,10 +161,10 @@
 		const index = attendees.findIndex((player) => player.email === playerEmail);
 		if (index !== -1) {
 			attendees.splice(index, 1);
-			// Update the teams after removing the player
+			
 			await teamMaker();
 
-			// Update the attendees in Firestore
+			
 			const practiceRef = doc(collection(db, 'practices'), practiceId);
 			await updateDoc(practiceRef, { attendees });
 		}
@@ -173,9 +173,8 @@
 	async function calculateEloGain(winningTeamIndex) {
 		const losingTeamIndex = winningTeamIndex === 0 ? 1 : 0;
 		const avgEloRatings = await calculateAvgElo();
-		const K = 32; // K-factor in Elo rating system
-
-		// Calculate Elo gain for winning team
+		const K = 32; 
+		
 		teams[winningTeamIndex] = await Promise.all(
 			// @ts-ignore
 			teams[winningTeamIndex].map(async (player) => {
@@ -183,7 +182,7 @@
 					1 / (1 + Math.pow(10, (avgEloRatings[losingTeamIndex] - player.playerElo) / 400));
 				const newElo = player.playerElo + K * (1 - expectedScore);
 
-				// Update playerElo in Firestore
+				
 				const playerDocRef = doc(db, 'players', player.email);
 				// @ts-ignore
 				await updateDoc(playerDocRef, { playerElo: newElo }, { merge: true });
@@ -192,7 +191,7 @@
 			})
 		);
 
-		// Calculate Elo gain for losing team
+	
 		teams[losingTeamIndex] = await Promise.all(
 			// @ts-ignore
 			teams[losingTeamIndex].map(async (player) => {
@@ -200,7 +199,7 @@
 					1 / (1 + Math.pow(10, (avgEloRatings[winningTeamIndex] - player.playerElo) / 400));
 				const newElo = player.playerElo + K * (0 - expectedScore);
 
-				// Update playerElo in Firestore
+				
 				const playerDocRef = doc(db, 'players', player.email);
 				// @ts-ignore
 				await updateDoc(playerDocRef, { playerElo: newElo }, { merge: true });
@@ -210,6 +209,7 @@
 		);
 	}
 
+	// sitas sliktākajā gadījuma, ja visa elo sistēma nobrūk :D
 	async function resetElo() {
 		const playersCollectionRef = collection(db, 'players');
 		const playersSnapshot = await getDocs(playersCollectionRef);

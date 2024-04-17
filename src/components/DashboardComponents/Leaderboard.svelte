@@ -13,8 +13,8 @@
 		getDocs
 	} from 'firebase/firestore';
 	import { onMount } from 'svelte';
-	import Leaderboard from './Leaderboard.svelte';
 	import { sortBy } from '../../stores/stores';
+	import { update } from 'firebase/database';
 
 	let email: any;
 	let displayName: any;
@@ -22,6 +22,8 @@
 	let attendees: any[] = [];
 
 	let playerData: any = [];
+
+	let unique = {};
 
 	let time = new Date();
 
@@ -118,6 +120,8 @@
 		playerData = playerSnapshots.docs.map((doc) => doc.data());
 
 		console.log(playerData);
+
+		loadLeaderboard();
 	});
 
 	async function toggleCheckIn() {
@@ -137,55 +141,91 @@
 		refreshPage();
 	}
 
-	
+	let sortedPlayerData: any[] = [];
+
+
+	async function loadLeaderboard() {
+
+		sortedPlayerData = [...playerData]
+			.filter((player) => player.displayName !== 'big bazongas')
+            // @ts-ignore
+			.sort(sortPlayers);
+	}
+
+	$: {
+		if ($sortBy) {
+			loadLeaderboard();
+		}
+	}
+
+	function sortPlayers(a: { playerElo: number; losses: number; wins: number; }, b: { playerElo: number; losses: number; wins: number; }) {
+		if ($sortBy === 'elo') {
+			return b.playerElo - a.playerElo;
+		} else if ($sortBy === 'wl') {
+			let aRatio = a.losses === 0 ? a.wins : a.wins / a.losses;
+			let bRatio = b.losses === 0 ? b.wins : b.wins / b.losses;
+			return bRatio - aRatio;
+		}
+	}
 </script>
 
-<svelte:head>
-	<style>
-		body {
-			background-color: #1f2937; /* bg-gray-800 */
-			color: #f7fafc; /* text-gray-100 */
-		}
-	</style>
-</svelte:head>
-
-<main
-	class="bg-gray-800 text-gray-100 flex justify-center items-start min-h-screen p-4 pt-20 flex-wrap"
-	style="height: calc(100vh - 5rem);"
->
-	<div class="flex-col flex space-y-10">
-		<div class="w-auto h-auto p-8 space-y-2 bg-gray-900 rounded-lg">
-			<div class="h-full flex flex-col justify-center items-center p-1 text-lg">
-				<div class="flex items-center justify-center text-center">
-					<strong
-						>{dayDict[daysTillSaturday]}, {saturdayDate}.{monthDict[mm]}, 18:00(19:00 uz papīriem)
-						<i>mūsu skolas</i> (Ūnijas iela 93) zālē volejbols
-					</strong>
-				</div>
-			</div>
-
-			<div class="flex flex-col items-center justify-center space-y-3">
-				<button
-					on:click={toggleCheckIn}
-					class="border rounded {isCheckedIn
-						? 'bg-red-500 hover:bg-red-600'
-						: 'bg-green-500 hover:bg-green-600'} p-1"
-					>{isCheckedIn ? 'Atteikties' : 'Pieteikties'}</button
+<div class="flex flex-col">
+	<h1 class="text-2xl text-center font-bold">Līderi</h1>
+	<table class="m-2 flex-shrink-0">
+		<thead class="border-b">
+			<tr class="text-center">
+				<th scope="col" class="text-sm font-medium text-gray-100 text-center px-6 py-4 text-left"
+					>#</th
 				>
+				<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
+					>Vārds</th
+				>
+				<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
+					>W</th
+				>
+				<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
+					>L</th
+				>
+				<th
+					scope="col"
+					class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
+					on:click={() => ($sortBy = 'wl')}
+					><button class={$sortBy === 'wl' ? 'font-bold' : ''} on:click={() => ($sortBy = 'wl')}
+						>W/L</button
+					>
+				</th>
+				<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
+					><button class={$sortBy === 'elo' ? 'font-bold' : ''} on:click={() => ($sortBy = 'elo')}
+						>Reitings</button
+					>
+				</th>
+			</tr></thead
+		>
+		<tbody>
+			{#if Array.isArray(playerData)}
+				{#each sortedPlayerData as player, i (player.displayName)}
+					<tr class="border-b text-center">
+						<td>{i + 1}</td>
+						<td class="text-sm text-gray-100 font-light px-6 py-4 whitespace-nowrap"
+							>{player.displayName}</td
+						>
+						<td>{player.wins}</td>
+						<td>{player.losses}</td>
+						<td
+							>{player.losses === 0
+								? player.wins.toFixed(1)
+								: (player.wins / player.losses).toFixed(1)}</td
+						>
+						<td>{player.playerElo.toFixed(0)}</td>
+					</tr>
+				{/each}
+			{/if}
+		</tbody>
+	</table>
+</div>
 
-				<div class="flex flex-col items-center justify-center space-y-3">
-					{#if attendees.length !== 0}
-						<h2 class="text-center text-xl"><strong>Pieteikušies:</strong></h2>
-						<ul class="flex flex-col rounded items-center space-y-2 p-1">
-							{#each attendees as attendee (attendee.email)}
-								<li>•{attendee.displayName}</li>
-							{/each}
-						</ul>
-						<p class="text-center">Skaits: {attendees.length}</p>
-					{/if}
-				</div>
-			</div>
-		</div>
-		<Leaderboard />
-	</div>
-</main>
+<style>
+	tr:nth-child(even) {
+		background-color: #1a202c;
+	}
+</style>
