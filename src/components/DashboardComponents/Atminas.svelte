@@ -9,6 +9,7 @@
 	let downloadUrl = '';
 
 	let mediaList: any[] = [];
+
 	let videoFileExtensions = [
 		'webm',
 		'mkv',
@@ -64,12 +65,10 @@
 
 	const MAX_FILE_SIZE = 15730140; // 15MB
 
-	// @ts-ignore
-
-	function handleFileChange(event) {
+	function handleFileChange(event: { target: { files: any[] } }) {
 		file = event.target.files[0];
 		if (file.size > MAX_FILE_SIZE) {
-			alert('Fails ir pārāk liels, limits ir 10MB');
+			alert('Fails ir pārāk liels, limits ir 15MB');
 			file = null;
 		} else if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
 			alert('Tikai bildes un video ir atļautas');
@@ -95,14 +94,11 @@
 				uploadProgress = progress;
 			},
 
-			(error) => {
-				console.error('Upload failed:', error);
-			},
+			(error) => {},
 
 			() => {
 				getDownloadURL(uploadTask.snapshot.ref).then((url) => {
 					downloadUrl = url;
-					console.log('File available at', url);
 				});
 			}
 		);
@@ -153,7 +149,6 @@
 				{/if}
 			{/each}
 			<input type="file" bind:this={fileInput} on:change={handleFileChange} style="display: none" />
-
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<!-- svelte-ignore a11y-no-static-element-interactions -->
 			<div class="flex items-center justify-center">

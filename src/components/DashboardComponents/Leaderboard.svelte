@@ -1,155 +1,39 @@
 <script lang="ts">
-	import { authStore, authHandlers } from '../../stores/authStore';
-	import { dayDict, monthDict } from '../../stores/dictStore';
+	import { userStore, practiceId } from '../../stores/stores';
 	import { db } from '../../lib/firebase/firebase.client';
-	import {
-		collection,
-		doc,
-		setDoc,
-		updateDoc,
-		arrayUnion,
-		getDoc,
-		arrayRemove,
-		getDocs
-	} from 'firebase/firestore';
+	import { collection, getDocs } from 'firebase/firestore';
 	import { onMount } from 'svelte';
 	import { sortBy } from '../../stores/stores';
-	import { update } from 'firebase/database';
-
-	let email: any;
-	let displayName: any;
-	let isverified: any;
-	let attendees: any[] = [];
 
 	let playerData: any = [];
 
-	let unique = {};
+	let user;
+	let pId;
 
-	let time = new Date();
-
-	$: dd = time.getDate();
-	$: mm = time.getMonth();
-
-	$: daysTillSaturday = 6 - time.getDay();
-	$: saturdayDate = dd + daysTillSaturday;
-
-	let isAdmin = false;
-	let uid: any;
-	$: {
-		if (daysTillSaturday < 0) {
-			daysTillSaturday = 6;
-		}
-	}
-
-	authStore.subscribe(async (curr) => {
-		// @ts-ignore
-		email = curr?.currentUser?.email;
-		// @ts-ignore
-		displayName = curr?.currentUser?.displayName;
-		// @ts-ignore
-		isverified = curr?.currentUser?.emailVerified;
-		// @ts-ignore
-		uid = curr?.currentUser?.uid;
-
-		// @ts-ignore
-		const newDisplayName = curr?.currentUser?.displayName;
-
-		if (displayName !== newDisplayName) {
-			displayName = newDisplayName;
-			updateNameInPracticesDoc(displayName);
-		}
-
-		const adminRef = doc(db, 'admins', uid);
-		const adminDocSnapshot = await getDoc(adminRef);
-
-		if (adminDocSnapshot.exists()) {
-			isAdmin = true;
-		} else {
-			isAdmin = false;
-		}
+	userStore.subscribe((value) => {
+		user = value;
+	});
+	practiceId.subscribe((value) => {
+		pId = value;
 	});
 
-	async function updateNameInPracticesDoc(newName: string) {
-		const practiceRef = doc(collection(db, 'practices'), practiceId);
-		await updateDoc(practiceRef, {
-			attendees: attendees.map((attendee) => {
-				if (attendee.email === email) {
-					return { email, displayName: newName };
-				}
-				return attendee;
-			})
-		});
-	}
-
-	function refreshPage() {
-		window.location.reload();
-	}
-
-	function getNextSaturday() {
-		const now = new Date();
-		const nextSaturday = new Date(
-			now.getFullYear(),
-			now.getMonth(),
-			now.getDate() + (7 - now.getDay() || 7)
-		);
-		return nextSaturday.toISOString().split('T')[0];
-	}
-
-	export const practiceId = getNextSaturday();
-
-	let isCheckedIn: boolean;
-
 	onMount(async () => {
-		const practiceRef = doc(collection(db, 'practices'), practiceId);
-		const practiceSnap = await getDoc(practiceRef);
-
-		if (practiceSnap.exists()) {
-			console.log('Document found');
-			attendees = practiceSnap.data().attendees;
-			isCheckedIn = attendees.some((attendee) => attendee.email === email);
-		} else {
-			console.log('No such document, creating new one');
-			await setDoc(practiceRef, {
-				attendees: []
-			});
-		}
-
 		const playerCollectionRef = collection(db, 'players');
 		const playerSnapshots = await getDocs(playerCollectionRef);
 
 		playerData = playerSnapshots.docs.map((doc) => doc.data());
 
-		console.log(playerData);
-
 		loadLeaderboard();
 	});
 
-	async function toggleCheckIn() {
-		const practiceRef = doc(collection(db, 'practices'), practiceId);
-
-		if (isCheckedIn) {
-			await updateDoc(practiceRef, {
-				attendees: arrayRemove({ email, displayName })
-			});
-		} else {
-			await updateDoc(practiceRef, {
-				attendees: arrayUnion({ email, displayName })
-			});
-		}
-
-		isCheckedIn = !isCheckedIn;
-		refreshPage();
-	}
-
 	let sortedPlayerData: any[] = [];
 
-
 	async function loadLeaderboard() {
-
+		const excludedNames = ['big bazongas', 'ahaha', 'huge bazongas'];
 		sortedPlayerData = [...playerData]
-			.filter((player) => player.displayName !== 'big bazongas')
-            // @ts-ignore
-			.sort(sortPlayers);
+			.filter((player) => !excludedNames.includes(player.displayName))
+
+			.sort((a, b) => sortPlayers(a, b) || 0);
 	}
 
 	$: {
@@ -158,7 +42,10 @@
 		}
 	}
 
-	function sortPlayers(a: { playerElo: number; losses: number; wins: number; }, b: { playerElo: number; losses: number; wins: number; }) {
+	function sortPlayers(
+		a: { playerElo: number; losses: number; wins: number },
+		b: { playerElo: number; losses: number; wins: number }
+	) {
 		if ($sortBy === 'elo') {
 			return b.playerElo - a.playerElo;
 		} else if ($sortBy === 'wl') {

@@ -1,13 +1,10 @@
-<script lang='ts'>
+<script lang="ts">
 	import { onMount } from 'svelte';
-	// @ts-ignore
-	import { onAuthStateChanged } from '@firebase/auth';
-	// @ts-ignore
-	import { db, auth } from '$lib/firebase/firebase.client';
+
+	import { db } from '$lib/firebase/firebase.client';
 	import { collection, doc, setDoc, updateDoc, getDoc, getDocs } from 'firebase/firestore';
-	import { authStore } from '../../stores/authStore';
 	import { userStore, practiceId } from '../../stores/stores';
-	
+
 	let user: {
 		email: any;
 		displayName?: StringConstructor;
@@ -19,9 +16,10 @@
 	userStore.subscribe((value) => {
 		user = value;
 	});
-	practiceId.subscribe((value) => {pId = value})
+	practiceId.subscribe((value) => {
+		pId = value;
+	});
 
-	
 	let attendees: any;
 
 	onMount(async () => {
@@ -31,15 +29,10 @@
 		if (practiceSnap.exists()) {
 			console.log('Document found');
 			attendees = practiceSnap.data().attendees;
-			console.log(attendees);
 		}
-		teamMaker();
 	});
 
-	/**
-	 * @type {any[]}
-	 */
-	let teams = [];
+	let teams: any[] = [];
 	async function teamMaker() {
 		const teamCount = attendees.length <= 14 ? 2 : 3;
 
@@ -71,17 +64,14 @@
 			);
 			newTeams.push(teamWithWins);
 		}
-
-		console.log(newTeams);
 		teams = newTeams;
 
 		const avgEloRatings = calculateAvgElo();
-		console.log(avgEloRatings);
 	}
 	/**
 	 * @param {number} winningTeamIndex
 	 */
-	async function updateWinsAndLosses(winningTeamIndex) {
+	async function updateWinsAndLosses(winningTeamIndex: number) {
 		const losingTeamIndex = winningTeamIndex === 0 ? 1 : 0;
 
 		if (teams[winningTeamIndex]) {
@@ -142,20 +132,18 @@
 		const index = attendees.findIndex((player) => player.email === playerEmail);
 		if (index !== -1) {
 			attendees.splice(index, 1);
-			
-			await teamMaker();
 
-			
+			await teamMaker();
 			const practiceRef = doc(collection(db, 'practices'), pId);
 			await updateDoc(practiceRef, { attendees });
 		}
 	}
-	// @ts-ignore
-	async function calculateEloGain(winningTeamIndex) {
+
+	async function calculateEloGain(winningTeamIndex: number) {
 		const losingTeamIndex = winningTeamIndex === 0 ? 1 : 0;
 		const avgEloRatings = await calculateAvgElo();
-		const K = 32; 
-		
+		const K = 32;
+
 		teams[winningTeamIndex] = await Promise.all(
 			// @ts-ignore
 			teams[winningTeamIndex].map(async (player) => {
@@ -163,7 +151,6 @@
 					1 / (1 + Math.pow(10, (avgEloRatings[losingTeamIndex] - player.playerElo) / 400));
 				const newElo = player.playerElo + K * (1 - expectedScore);
 
-				
 				const playerDocRef = doc(db, 'players', player.email);
 				// @ts-ignore
 				await updateDoc(playerDocRef, { playerElo: newElo }, { merge: true });
@@ -172,15 +159,12 @@
 			})
 		);
 
-	
 		teams[losingTeamIndex] = await Promise.all(
-			// @ts-ignore
-			teams[losingTeamIndex].map(async (player) => {
+			teams[losingTeamIndex].map(async (player: { playerElo: number; email: string }) => {
 				const expectedScore =
 					1 / (1 + Math.pow(10, (avgEloRatings[winningTeamIndex] - player.playerElo) / 400));
 				const newElo = player.playerElo + K * (0 - expectedScore);
 
-				
 				const playerDocRef = doc(db, 'players', player.email);
 				// @ts-ignore
 				await updateDoc(playerDocRef, { playerElo: newElo }, { merge: true });
@@ -284,7 +268,6 @@
 							{/if}
 						</div>
 					{/each}
-					<button on:click={resetElo}> buibuiaeujnrbhikrgignji</button>
 				</div>
 			</div>
 		</div>

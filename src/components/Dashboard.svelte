@@ -18,7 +18,7 @@
 	let pId: string;
 
 	let currentUser: { currentUser: any; isLoading?: boolean };
-	// @ts-ignore
+	
 	let user: {
 		uid: string;
 		email: string;
