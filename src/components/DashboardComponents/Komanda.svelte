@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
 	import { onMount } from 'svelte';
 	// @ts-ignore
 	import { onAuthStateChanged } from '@firebase/auth';
@@ -6,45 +6,26 @@
 	import { db, auth } from '$lib/firebase/firebase.client';
 	import { collection, doc, setDoc, updateDoc, getDoc, getDocs } from 'firebase/firestore';
 	import { authStore } from '../../stores/authStore';
+	import { userStore, practiceId } from '../../stores/stores';
+	
+	let user: {
+		email: any;
+		displayName?: StringConstructor;
+		isverified?: boolean;
+		uid?: StringConstructor;
+	};
+	let pId: string;
 
-	/**
-	 * @type {string | undefined}
-	 */
-	let email;
-	let displayName;
-	let isverified;
-	let uid;
-
-	/**
-	 * @type {never[]}
-	 */
-	let attendees = [];
-
-	authStore.subscribe(async (curr) => {
-		// @ts-ignore
-		email = curr?.currentUser?.email;
-		// @ts-ignore
-		displayName = curr?.currentUser?.displayName;
-		// @ts-ignore
-		isverified = curr?.currentUser?.emailVerified;
-		// @ts-ignore
-		uid = curr?.currentUser?.uid;
+	userStore.subscribe((value) => {
+		user = value;
 	});
+	practiceId.subscribe((value) => {pId = value})
 
-	function getNextSaturday() {
-		const now = new Date();
-		const nextSaturday = new Date(
-			now.getFullYear(),
-			now.getMonth(),
-			now.getDate() + (7 - now.getDay() || 7)
-		);
-		return nextSaturday.toISOString().split('T')[0];
-	}
-
-	const practiceId = getNextSaturday();
+	
+	let attendees: any;
 
 	onMount(async () => {
-		const practiceRef = doc(collection(db, 'practices'), practiceId);
+		const practiceRef = doc(collection(db, 'practices'), pId);
 		const practiceSnap = await getDoc(practiceRef);
 
 		if (practiceSnap.exists()) {
@@ -165,7 +146,7 @@
 			await teamMaker();
 
 			
-			const practiceRef = doc(collection(db, 'practices'), practiceId);
+			const practiceRef = doc(collection(db, 'practices'), pId);
 			await updateDoc(practiceRef, { attendees });
 		}
 	}
@@ -303,6 +284,7 @@
 							{/if}
 						</div>
 					{/each}
+					<button on:click={resetElo}> buibuiaeujnrbhikrgignji</button>
 				</div>
 			</div>
 		</div>

@@ -2,115 +2,82 @@
 	import { authStore, authHandlers } from '../stores/authStore';
 	import { dayDict, monthDict } from '../stores/dictStore';
 	import { db } from '../lib/firebase/firebase.client';
-	// @ts-ignore
 	import Volejbols from './DashboardComponents/Volejbols.svelte';
 	import Konts from './DashboardComponents/Konts.svelte';
 	import Atminas from './DashboardComponents/Atminas.svelte';
 	import Kontakti from './DashboardComponents/Kontakti.svelte';
-	// @ts-ignore
 	import Komanda from './DashboardComponents/Komanda.svelte';
 
-
-	import { collection, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
+	import { collection, doc, setDoc, getDoc } from 'firebase/firestore';
 	import { onMount } from 'svelte';
+	import { userStore, practiceId } from '../stores/stores';
 
-	let email: any;
-	let displayName: any;
-	let isverified: any;
-	let uid: any;
-	let attendees: any[] = [];
+	let attendees: any[];
 	let players: any[] = [];
-	let isAdmin = false;
+	let admin = false;
+	let pId: string;
 
-	let time = new Date();
-
-	$: dd = time.getDate();
-	$: mm = time.getMonth();
-
-	$: daysTillSaturday = 6 - time.getDay();
-
-	$: {
-		if (daysTillSaturday < 0) {
-			daysTillSaturday = 6;
-		}
-	}
+	let currentUser: { currentUser: any; isLoading?: boolean };
+	// @ts-ignore
+	let user: {
+		uid: string;
+		email: string;
+		displayName: string;
+		isAdmin: boolean;
+		isverified: boolean;
+	};
+	practiceId.subscribe((value) => {
+		pId = value;
+	})
 
 	authStore.subscribe(async (curr) => {
-		// @ts-ignore
-		email = curr?.currentUser?.email;
-		// @ts-ignore
-		displayName = curr?.currentUser?.displayName;
-		// @ts-ignore
-		isverified = curr?.currentUser?.emailVerified;
-		// @ts-ignore
-		uid = curr?.currentUser?.uid;
+		currentUser = curr;
+		user = currentUser?.currentUser;
+	});
+	userStore.update(() => {
+		return {
+			displayName: currentUser?.currentUser?.displayName,
+			email: currentUser?.currentUser?.email,
+			isverified: currentUser?.currentUser?.emailVerified,
+			uid: currentUser?.currentUser?.uid,
+			isAdmin: admin
+		};
+	});
 
-		// @ts-ignore
-		const newDisplayName = curr?.currentUser?.displayName;
+	async function findAdmins() {
+		const adminRef = doc(collection(db, 'admins'), user.uid);
 
-		if (displayName !== newDisplayName) {
-			displayName = newDisplayName;
-			updateNameInPracticesDoc(displayName);
-		}
-
-		const adminRef = doc(db, 'admins', uid);
 		const adminDocSnapshot = await getDoc(adminRef);
 
 		if (adminDocSnapshot.exists()) {
-			isAdmin = true;
+			user.isAdmin = true;
 		} else {
-			isAdmin = false;
+			user.isAdmin = false;
 		}
-	});
-
-	async function updateNameInPracticesDoc(newName: string) {
-		const practiceRef = doc(collection(db, 'practices'), practiceId);
-		await updateDoc(practiceRef, {
-			attendees: attendees.map((attendee) => {
-				if (attendee.email === email) {
-					return { email, displayName: newName };
-				}
-				return attendee;
-			})
-		});
 	}
 
-	function getNextSaturday() {
-		const now = new Date();
-		const nextSaturday = new Date(
-			now.getFullYear(),
-			now.getMonth(),
-			now.getDate() + (7 - now.getDay() || 7)
-		);
-		return nextSaturday.toISOString().split('T')[0];
-	}
-
-	export const practiceId = getNextSaturday();
+	
 
 	onMount(async () => {
-		const practiceRef = doc(collection(db, 'practices'), practiceId);
+		const practiceRef = doc(collection(db, 'practices'), pId);
 		const practiceSnap = await getDoc(practiceRef);
 
 		if (practiceSnap.exists()) {
-			console.log('Document found');
 			attendees = practiceSnap.data().attendees;
 		} else {
-			console.log('No such document, creating new one');
 			await setDoc(practiceRef, {
 				attendees: []
 			});
 		}
 
-		const playerRef = doc(collection(db, 'players'), email);
+		const playerRef = doc(collection(db, 'players'), user.email);
 		const playerSnap = await getDoc(playerRef);
 
 		if (playerSnap.exists()) {
-			console.log('Document found');
 			players = playerSnap.data().wins;
 		} else {
-			console.log('No such document, creating new one');
 			await setDoc(playerRef, {
-				displayName: displayName,
+				displayName: user.displayName,
 				wins: 0,
 				losses: 0,
 				playerElo: 1200,
@@ -119,6 +86,8 @@
 		}
 
 		document.title = 'Volejbols';
+
+		findAdmins();
 	});
 
 	let activeTab = 'Volejbols';
@@ -138,7 +107,7 @@
 <nav class="bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 border-gray-600">
 	<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
 		<a href="/privatedashboard" class="flex items-center space-x-3 rtl:space-x-reverse">
-			<img src='logo.svg' class="h-8" alt="Logo" />
+			<img src="logo.svg" class="h-8" alt="Logo" />
 			<span class="self-center text-2xl font-semibold whitespace-nowrap text-white">Volejbols</span>
 		</a>
 		<div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
@@ -194,7 +163,7 @@
 
 					<!-- svelte-ignore a11y-invalid-attribute -->
 				</li>
-				{#if isAdmin}
+				{#if user.isAdmin}
 					<li>
 						<!-- svelte-ignore a11y-invalid-attribute -->
 						<a
@@ -246,7 +215,7 @@
 		<Volejbols />
 	</div>
 {/if}
-{#if isAdmin}
+{#if user.isAdmin}
 	{#if activeTab === 'Komandas'}
 		<div class="">
 			<Komanda />
