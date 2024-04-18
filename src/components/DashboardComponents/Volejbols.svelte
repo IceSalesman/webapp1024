@@ -16,7 +16,7 @@
 	import Leaderboard from './Leaderboard.svelte';
 	import { sortBy } from '../../stores/stores';
 
-	let email: any;
+	let email: string;
 	let displayName: any;
 	let isverified: any;
 	let attendees: any[] = [];
