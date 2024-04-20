@@ -192,12 +192,13 @@
 			background-color: #1f2937; /* bg-gray-800 */
 			color: #f7fafc; /* text-gray-100 */
 		}
+		
 	</style>
 </svelte:head>
 
 <main
 	class="bg-gray-800 text-gray-100 flex flex-row justify-center items-center h-full p-4 pt-20 sm:pt-32"
-	style="height: calc(100vh - 5rem);"
+	style="height: calc(100vh - 5rem); margin-top: 13rem;"
 >
 	<div class="flex flex-row flex-wrap justify-center">
 		<div class="overflow-x-auto sm:-mx-6 lg:-mx-8">

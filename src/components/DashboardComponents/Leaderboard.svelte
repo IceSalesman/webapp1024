@@ -56,6 +56,61 @@
 	}
 </script>
 
+<div class="flex flex-col">
+	<h1 class="text-2xl text-center font-bold md:text-3xl">Līderi</h1>
+	<div class="overflow-x-auto">
+		<table class="m-2 flex-shrink-0 w-full">
+			<thead class="border-b">
+				<tr class="text-center">
+					<th scope="col" class="text-sm font-medium text-gray-100 text-center px-6 py-4 text-left"
+						>#</th
+					>
+					<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
+						>Vārds</th
+					>
+					<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
+						>W</th
+					>
+					<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
+						>L</th
+					>
+					<th
+						scope="col"
+						class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
+						on:click={() => ($sortBy = 'wl')}
+						><button class={$sortBy === 'wl' ? 'font-bold' : ''} on:click={() => ($sortBy = 'wl')}
+							>W/L</button
+						>
+					</th>
+					<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
+						><button class={$sortBy === 'elo' ? 'font-bold' : ''} on:click={() => ($sortBy = 'elo')}
+							>Reitings</button
+						>
+					</th>
+				</tr></thead
+			>
+			<tbody>
+				{#if Array.isArray(playerData)}
+					{#each sortedPlayerData as player, i (player.displayName)}
+						<tr class="border-b text-center">
+							<td>{i + 1}</td>
+							<td class="text-sm text-gray-100 font-light px-6 py-4 whitespace-nowrap"
+								>{player.displayName}</td
+							>
+							<td>{player.wins}</td>
+							<td>{player.losses}</td>
+							<td
+								>{player.losses === 0
+									? player.wins.toFixed(1)
+									: (player.wins / player.losses).toFixed(1)}</td
+							>
+							<td>{player.playerElo.toFixed(0)}</td>
+						</tr>
+					{/each}
+				{/if}
+			</tbody>
+		</table>
+	</div>
 <div class="flex flex-col items-center justify-center overflow-auto">
     <h1 class="text-2xl text-center font-bold">Līderi</h1>
     <div class="overflow-auto">
@@ -116,5 +171,19 @@
 <style>
 	tr:nth-child(even) {
 		background-color: #1a202c;
+	}
+	@media (max-width: 640px) {
+		h1 {
+			font-size: 1.5rem;
+		}
+
+		table {
+			font-size: 0.8rem;
+		}
+
+		th,
+		td {
+			padding: 0.5rem;
+		}
 	}
 </style>
