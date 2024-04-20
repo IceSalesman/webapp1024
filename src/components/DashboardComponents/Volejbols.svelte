@@ -72,53 +72,57 @@
 	}
 </script>
 
+
+
 <svelte:head>
-	<style>
-		body {
-			background-color: #1f2937; /* bg-gray-800 */
-			color: #f7fafc; /* text-gray-100 */
-		}
-	</style>
+    <style>
+        body {
+            background-color: #1f2937; /* bg-gray-800 */
+            color: #f7fafc; /* text-gray-100 */
+        }
+    </style>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </svelte:head>
 
 <main
-	class="bg-gray-800 text-gray-100 flex justify-center items-start min-h-screen p-4 pt-20 flex-wrap"
-	style="height: calc(100vh - 5rem);"
+    class="bg-gray-800 text-gray-100 flex justify-center items-start min-h-screen p-4 pt-20 flex-wrap md:flex-nowrap"
+    style="height: calc(100vh - 5rem);"
 >
-	<div class="flex-col flex space-y-10">
-		<div class="w-auto h-auto p-8 space-y-2 bg-gray-900 rounded-lg">
-			<div class="h-full flex flex-col justify-center items-center p-1 text-lg">
-				<div class="flex items-center justify-center text-center">
-					<strong
-						>{dayDict[dateData.daysTillSaturday]}, {dateData.saturdayDate}.{monthDict[dateData.mm]},
-						18:00(19:00 uz papīriem)
-						<i>mūsu skolas</i> (Ūnijas iela 93) zālē volejbols
-					</strong>
-				</div>
-			</div>
+    <div class="flex-col flex space-y-10 w-full md:w-auto">
+        <div class="w-full h-full p-8 space-y-2 bg-gray-900 rounded-lg">
+            <div class="h-full flex flex-col justify-center items-center p-1 text-lg">
+                <div class="flex items-center justify-center text-center">
+                    <strong
+                        >{dayDict[dateData.daysTillSaturday]}, {dateData.saturdayDate}.{monthDict[dateData.mm]},
+                        18:00(19:00 uz papīriem)
+                        <i>mūsu skolas</i> (Ūnijas iela 93) zālē volejbols
+                    </strong>
+                </div>
+            </div>
 
-			<div class="flex flex-col items-center justify-center space-y-3">
-				<button
-					on:click={toggleCheckIn}
-					class="border rounded {isCheckedIn
-						? 'bg-red-500 hover:bg-red-600'
-						: 'bg-green-500 hover:bg-green-600'} p-1"
-					>{isCheckedIn ? 'Atteikties' : 'Pieteikties'}</button
-				>
+            <div class="flex flex-col items-center justify-center space-y-3">
+                <button
+                    on:click={toggleCheckIn}
+                    class="border rounded {isCheckedIn
+                        ? 'bg-red-500 hover:bg-red-600'
+                        : 'bg-green-500 hover:bg-green-600'} p-1"
+                    >{isCheckedIn ? 'Atteikties' : 'Pieteikties'}</button
+                >
 
-				<div class="flex flex-col items-center justify-center space-y-3">
-					{#if attendees.length !== 0}
-						<h2 class="text-center text-xl"><strong>Pieteikušies:</strong></h2>
-						<ul class="flex flex-col rounded items-center space-y-2 p-1">
-							{#each attendees as attendee (attendee.email)}
-								<li>•{attendee.displayName}</li>
-							{/each}
-						</ul>
-						<p class="text-center">Skaits: {attendees.length}</p>
-					{/if}
-				</div>
-			</div>
-		</div>
-		<Leaderboard />
-	</div>
+                <div class="flex flex-col items-center justify-center space-y-3">
+                    {#if attendees.length !== 0}
+                        <h2 class="text-center text-xl"><strong>Pieteikušies:</strong></h2>
+                        <ul class="flex flex-col rounded items-center space-y-2 p-1">
+                            {#each attendees as attendee (attendee.email)}
+                                <li>•{attendee.displayName}</li>
+                            {/each}
+                        </ul>
+                        <p class="text-center">Skaits: {attendees.length}</p>
+                    {/if}
+                </div>
+            </div>
+        </div>
+        <Leaderboard />
+    </div>
 </main>
