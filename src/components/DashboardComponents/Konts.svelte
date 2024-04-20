@@ -51,51 +51,37 @@
 	}
 
 	onMount(async () => {
-		console.log(practiceId);
-		const practiceRef = doc(collection(db, 'practices'), pId);
-		const practiceSnap = await getDoc(practiceRef);
-
-		if (practiceSnap.exists()) {
-			console.log('Document found');
-			attendees = practiceSnap.data().attendees;
-			console.log(attendees);
-		} else {
-			console.log('No such document, creating new one');
-			await setDoc(practiceRef, {
-				attendees: []
-			});
-		}
+	
 	});
 </script>
 
-<main class="flex flex-col items-center justify-center h-screen text-gray-100 bg-gray-800">
-	<div class="flex flex-col bg-gray-900 p-10 rounded justify-center">
-		<div class="mb-4 flex flex-col items-center justify-center">
-			<p class="font-bold">Vārds:</p>
-			<p>{user.displayName}</p>
-		</div>
-		<div class="mb-4 flex flex-col items-center justify-center">
-			<p class="font-bold">E-pasts:</p>
-			<p>{user.email}</p>
-		</div>
-		<form on:submit={handleSubmit}>
-			<div class="mb-4">
-				<p class="font-bold flex justify-center">Mainīt vārdu:</p>
-				<input
-					type="text"
-					bind:value={newDisplayName}
-					class="w-full p-2 border rounded bg-gray-800 border-gray-700"
-				/>
-			</div>
-			<div class="flex items-center justify-center">
-				<button
-					type="submit"
-					class="block w-full p-3 text-center rounded-sm text-gray-900 bg-violet-300"
-				>
-					Mainīt vārdu
-				</button>
-			</div>
-			<div class="flex items-center justify-center p-3"></div>
-		</form>
-	</div>
+<main class="grid grid-flow-col items-start h-screen text-gray-100 bg-gray-800 p-4">
+    <div class="bg-gray-900 p-10 rounded max-w-lg">
+        <div class="mb-4">
+            <p class="font-bold">Vārds:</p>
+            <p>{user.displayName}</p>
+        </div>
+        <div class="mb-4">
+            <p class="font-bold">E-pasts:</p>
+            <p>{user.email}</p>
+        </div>
+        <form on:submit={handleSubmit}>
+            <div class="mb-4">
+                <p class="font-bold">Mainīt vārdu:</p>
+                <input
+                    type="text"
+                    bind:value={newDisplayName}
+                    class="w-full p-2 border rounded bg-gray-800 border-gray-700"
+                />
+            </div>
+            <div>
+                <button
+                    type="submit"
+                    class="block w-full p-3 text-center rounded-sm text-gray-900 bg-violet-300"
+                >
+                    Mainīt vārdu
+                </button>
+            </div>
+        </form>
+    </div>
 </main>

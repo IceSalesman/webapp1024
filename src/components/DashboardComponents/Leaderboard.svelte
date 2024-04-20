@@ -56,59 +56,61 @@
 	}
 </script>
 
-<div class="flex flex-col">
-	<h1 class="text-2xl text-center font-bold">Līderi</h1>
-	<table class="m-2 flex-shrink-0">
-		<thead class="border-b">
-			<tr class="text-center">
-				<th scope="col" class="text-sm font-medium text-gray-100 text-center px-6 py-4 text-left"
-					>#</th
-				>
-				<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
-					>Vārds</th
-				>
-				<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
-					>W</th
-				>
-				<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
-					>L</th
-				>
-				<th
-					scope="col"
-					class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
-					on:click={() => ($sortBy = 'wl')}
-					><button class={$sortBy === 'wl' ? 'font-bold' : ''} on:click={() => ($sortBy = 'wl')}
-						>W/L</button
+<div class="flex flex-col items-center justify-center overflow-auto">
+    <h1 class="text-2xl text-center font-bold">Līderi</h1>
+    <div class="overflow-auto">
+        <table class="m-2 flex-shrink-0">
+			<thead class="border-b">
+				<tr class="text-center">
+					<th scope="col" class="text-sm font-medium text-gray-100 text-center px-6 py-4 text-left"
+						>#</th
 					>
-				</th>
-				<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
-					><button class={$sortBy === 'elo' ? 'font-bold' : ''} on:click={() => ($sortBy = 'elo')}
-						>Reitings</button
+					<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
+						>Vārds</th
 					>
-				</th>
-			</tr></thead
-		>
-		<tbody>
-			{#if Array.isArray(playerData)}
-				{#each sortedPlayerData as player, i (player.displayName)}
-					<tr class="border-b text-center">
-						<td>{i + 1}</td>
-						<td class="text-sm text-gray-100 font-light px-6 py-4 whitespace-nowrap"
-							>{player.displayName}</td
+					<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
+						>W</th
+					>
+					<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
+						>L</th
+					>
+					<th
+						scope="col"
+						class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
+						on:click={() => ($sortBy = 'wl')}
+						><button class={$sortBy === 'wl' ? 'font-bold' : ''} on:click={() => ($sortBy = 'wl')}
+							>W/L</button
 						>
-						<td>{player.wins}</td>
-						<td>{player.losses}</td>
-						<td
-							>{player.losses === 0
-								? player.wins.toFixed(1)
-								: (player.wins / player.losses).toFixed(1)}</td
+					</th>
+					<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
+						><button class={$sortBy === 'elo' ? 'font-bold' : ''} on:click={() => ($sortBy = 'elo')}
+							>Reitings</button
 						>
-						<td>{player.playerElo.toFixed(0)}</td>
-					</tr>
-				{/each}
-			{/if}
-		</tbody>
-	</table>
+					</th>
+				</tr></thead
+			>
+			<tbody>
+				{#if Array.isArray(playerData)}
+					{#each sortedPlayerData as player, i (player.displayName)}
+						<tr class="border-b text-center">
+							<td>{i + 1}</td>
+							<td class="text-sm text-gray-100 font-light px-6 py-4 whitespace-nowrap"
+								>{player.displayName}</td
+							>
+							<td>{player.wins}</td>
+							<td>{player.losses}</td>
+							<td
+								>{player.losses === 0
+									? player.wins.toFixed(1)
+									: (player.wins / player.losses).toFixed(1)}</td
+							>
+							<td>{player.playerElo.toFixed(0)}</td>
+						</tr>
+					{/each}
+				{/if}
+			</tbody>
+		</table>
+	</div>
 </div>
 
 <style>

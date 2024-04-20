@@ -18,7 +18,7 @@
 	let pId: string;
 
 	let currentUser: { currentUser: any; isLoading?: boolean };
-	
+
 	let user: {
 		uid: string;
 		email: string;
@@ -28,7 +28,7 @@
 	};
 	practiceId.subscribe((value) => {
 		pId = value;
-	})
+	});
 
 	authStore.subscribe(async (curr) => {
 		currentUser = curr;
@@ -55,8 +55,6 @@
 			user.isAdmin = false;
 		}
 	}
-
-	
 
 	onMount(async () => {
 		const practiceRef = doc(collection(db, 'practices'), pId);
@@ -209,33 +207,37 @@
 		</div>
 	</div>
 </nav>
-
-{#if activeTab === 'Volejbols'}
-	<div class="">
-		<Volejbols />
-	</div>
-{/if}
-{#if user.isAdmin}
-	{#if activeTab === 'Komandas'}
+<div
+	class="bg-gray-800 text-gray-100 flex justify-center items-start min-h-screen p-4 pt-20 flex-wrap"
+	style="height: calc(100vh - 5rem);"
+>
+	{#if activeTab === 'Volejbols'}
 		<div class="">
-			<Komanda />
+			<Volejbols />
 		</div>
 	{/if}
-{/if}
-{#if activeTab === 'Konts'}
-	<div class="">
-		<Konts />
-	</div>
-{/if}
+	{#if user.isAdmin}
+		{#if activeTab === 'Komandas'}
+			<div class="">
+				<Komanda />
+			</div>
+		{/if}
+	{/if}
+	{#if activeTab === 'Konts'}
+		<div class="">
+			<Konts />
+		</div>
+	{/if}
 
-{#if activeTab === 'Atminas'}
-	<div class="">
-		<Atminas />
-	</div>
-{/if}
+	{#if activeTab === 'Atminas'}
+		<div class="">
+			<Atminas />
+		</div>
+	{/if}
 
-{#if activeTab === 'Kontakti'}
-	<div class="">
-		<Kontakti />
-	</div>
-{/if}
+	{#if activeTab === 'Kontakti'}
+		<div class="">
+			<Kontakti />
+		</div>
+	{/if}
+</div>
