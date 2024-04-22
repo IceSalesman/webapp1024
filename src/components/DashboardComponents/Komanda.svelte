@@ -22,8 +22,9 @@
 
 	let attendees: any;
 
+
 	onMount(async () => {
-		const practiceRef = doc(collection(db, 'practices'), pId);
+		const practiceRef = doc(collection(db, 'practices'), '2024-04-20');
 		const practiceSnap = await getDoc(practiceRef);
 
 		if (practiceSnap.exists()) {
@@ -192,7 +193,24 @@
 			background-color: #1f2937; /* bg-gray-800 */
 			color: #f7fafc; /* text-gray-100 */
 		}
-		
+
+		@media (max-width: 640px) {
+			main {
+				padding: 2rem 1rem;
+			}
+
+			table {
+				font-size: 0.875rem;
+			}
+
+			.overflow-x-auto {
+				overflow-x: scroll;
+			}
+
+			.flex-col {
+				flex-direction: column;
+			}
+		}
 	</style>
 </svelte:head>
 
@@ -203,7 +221,7 @@
 	<div class="flex flex-row flex-wrap justify-center">
 		<div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
 			<div class="py-2 inline-block min-w-full sm:px-6 lg:px-8">
-				<div class="flex items-center justify-center">
+				<div class="fixed top-20 z-50">
 					<button
 						class="block p-3 text-center rounded-sm text-gray-900 bg-violet-300"
 						on:click={teamMaker}>Izveidot Komandas</button
@@ -243,7 +261,7 @@
 												<td>{player.wins}</td>
 												<td>{player.losses}</td>
 
-												<td>{player.playerElo}</td>
+												<td>{player.playerElo.toFixed(2)}</td>
 												<td>
 													<button
 														class="block p-3 text-center rounded-sm text-gray-900 bg-violet-300"
