@@ -1,26 +1,14 @@
-<script>
+<script lang='ts'>
 	import Loading from '../../components/Loading.svelte';
 	import { authStore } from '../../stores/authStore';
 	import NotVerified from '../../components/notVerified.svelte';
 	import Dashboard from '../../components/Dashboard.svelte';
 
-	// @ts-ignore
-	/**
-	 * @type {any}
-	 */
-	let email;
-	// @ts-ignore
-	/**
-	 * @type {any}
-	 */
-	let displayName;
 
-	/**
-	 * @type {any}
-	 */
-	let isverified;
-	authStore.subscribe((curr) => {
-		// @ts-ignore
+	
+	let isverified: boolean | undefined = false;
+
+	authStore.subscribe(curr => {
 		isverified = curr?.currentUser?.emailVerified;
 	});
 </script>

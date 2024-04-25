@@ -1,10 +1,8 @@
 <script lang="ts">
-	import { userStore, practiceId } from '../../stores/stores';
+	import { userStore, practiceId, sortBy } from '../../stores/stores';
 	import { db } from '../../lib/firebase/firebase.client';
 	import { collection, getDocs } from 'firebase/firestore';
-	import { onMount } from 'svelte';
-	import { sortBy } from '../../stores/stores';
-
+	import { onDestroy, onMount } from 'svelte';
 	let playerData: any = [];
 
 	let user;
@@ -18,6 +16,11 @@
 	});
 
 	onMount(async () => {
+		const savedSortBy = localStorage.getItem('sortBy');
+		if (savedSortBy) {
+			sortBy.set(savedSortBy);
+			localStorage.setItem('sortBy', savedSortBy);
+		}
 		const playerCollectionRef = collection(db, 'players');
 		const playerSnapshots = await getDocs(playerCollectionRef);
 
@@ -49,18 +52,38 @@
 		if ($sortBy === 'elo') {
 			return b.playerElo - a.playerElo;
 		} else if ($sortBy === 'wl') {
-			let aRatio = a.losses === 0 ? a.wins : a.wins / a.losses;
-			let bRatio = b.losses === 0 ? b.wins : b.wins / b.losses;
+			let aRatio = a.losses === 0 ? a.wins : a.wins / (a.losses + a.wins);
+			let bRatio = b.losses === 0 ? b.wins : b.wins / (b.losses + b.wins);
 			return bRatio - aRatio;
+		} else if ($sortBy === 'w') {
+			return b.wins - a.wins;
+		} else if ($sortBy === 'l') {
+			return b.losses - a.losses;
+		}
+	}
+
+	function getWL(player: { wins: number; losses: number }) {
+		if (player.wins === 0) {
+			return 0;
+		} else {
+			const wl = ((player.wins / (player.wins + player.losses)) * 100).toFixed(1);
+			return wl;
 		}
 	}
 </script>
 
-
 <div class="flex flex-col items-center justify-center overflow-auto">
-    <h1 class="text-2xl text-center font-bold">Līderi</h1>
-    <div class="overflow-auto">
-        <table class="m-2 flex-shrink-0">
+	<h1 class="text-2xl text-center font-bold">
+		{#if $sortBy === 'elo'}Reitinga
+		{:else if $sortBy === 'wl'}Uzvaras procentu
+		{:else if $sortBy === 'w'}Uzvaru
+		{:else if $sortBy === 'l'}Zaudējumu
+		{:else}
+		{/if}
+		Līderi
+	</h1>
+	<div class="overflow-auto">
+		<table class="m-2 flex-shrink-0">
 			<thead class="border-b">
 				<tr class="text-center">
 					<th scope="col" class="text-sm font-medium text-gray-100 text-center px-6 py-4 text-left"
@@ -69,18 +92,22 @@
 					<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
 						>Vārds</th
 					>
-					<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
-						>W</th
-					>
-					<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
-						>L</th
+					<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left">
+						<button class={$sortBy === 'w' ? 'font-bold' : ''} on:click={() => ($sortBy = 'w')}>
+							W
+						</button>
+					</th>
+					<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left">
+						<button class={$sortBy === 'l' ? 'font-bold' : ''} on:click={() => ($sortBy = 'l')}>
+							L</button
+						></th
 					>
 					<th
 						scope="col"
 						class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
 						on:click={() => ($sortBy = 'wl')}
 						><button class={$sortBy === 'wl' ? 'font-bold' : ''} on:click={() => ($sortBy = 'wl')}
-							>W/L</button
+							>W%</button
 						>
 					</th>
 					<th scope="col" class="text-sm font-medium text-center text-gray-100 px-6 py-4 text-left"
@@ -94,17 +121,23 @@
 				{#if Array.isArray(playerData)}
 					{#each sortedPlayerData as player, i (player.displayName)}
 						<tr class="border-b text-center">
-							<td>{i + 1}</td>
+							<td
+								>{#if i === 0}
+									1
+								{:else if i === 1}
+									2
+								{:else if i === 2}
+									3
+								{:else}
+									{i + 1}
+								{/if}</td
+							>
 							<td class="text-sm text-gray-100 font-light px-6 py-4 whitespace-nowrap"
 								>{player.displayName}</td
 							>
 							<td>{player.wins}</td>
 							<td>{player.losses}</td>
-							<td
-								>{player.losses === 0
-									? player.wins.toFixed(1)
-									: (player.wins / player.losses).toFixed(1)}</td
-							>
+							<td>{getWL(player)}%</td>
 							<td>{player.playerElo.toFixed(0)}</td>
 						</tr>
 					{/each}
