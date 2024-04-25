@@ -9,7 +9,8 @@
 		updateDoc,
 		arrayUnion,
 		getDoc,
-		arrayRemove
+		arrayRemove,
+		getDocs
 	} from 'firebase/firestore';
 	import { onMount } from 'svelte';
 	import Leaderboard from './Leaderboard.svelte';
@@ -70,6 +71,7 @@
 		isCheckedIn = !isCheckedIn;
 		window.location.reload();
 	}
+
 </script>
 
 <svelte:head>

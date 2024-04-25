@@ -3,7 +3,7 @@
 	import { db } from '$lib/firebase/firebase.client';
 
 	import { onMount } from 'svelte';
-	import { collection, doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+	import { collection, doc, updateDoc } from 'firebase/firestore';
 	import { userStore, practiceId } from '../../stores/stores';
 
 	let user: {
