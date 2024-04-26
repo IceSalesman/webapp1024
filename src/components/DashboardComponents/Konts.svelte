@@ -3,7 +3,7 @@
 	import { db } from '$lib/firebase/firebase.client';
 
 	import { onMount } from 'svelte';
-	import { collection, doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+	import { collection, doc, setDoc, getDoc, updateDoc, getDocs } from 'firebase/firestore';
 	import { userStore, practiceId } from '../../stores/stores';
 
 	let user: {
@@ -27,10 +27,29 @@
 	let newDisplayName: string = '';
 
 	async function handleSubmit() {
-		await authHandlers.updateProfile(newDisplayName);
-		await updateNameInPracticesDoc(newDisplayName);
+		let isItDoe = await isUsernameTaken(newDisplayName);
+		if (isItDoe) {
+			alert('Vārds nav pieejams, izvēlaties citu vārdu');
+		} else {
+			await authHandlers.updateProfile(newDisplayName);
+			await updateNameInPracticesDoc(newDisplayName);
 
-		window.location.reload();
+			window.location.reload();
+		}
+	}
+
+	async function isUsernameTaken(newDisplayName: string) {
+		const playerRef = collection(db, 'players');
+		const playerSnapshot = await getDocs(playerRef);
+		const players = playerSnapshot.docs.map((doc) => doc.data());
+
+		const isUsernameTaken = players.some((player) => player.displayName === newDisplayName);
+
+		if (isUsernameTaken) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	async function updateNameInPracticesDoc(newDisplayName: string) {
