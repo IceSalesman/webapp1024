@@ -78,7 +78,6 @@
 		{:else if $sortBy === 'wl'}Uzvaras procentu
 		{:else if $sortBy === 'w'}Uzvaru
 		{:else if $sortBy === 'l'}Zaudējumu
-		{:else}
 		{/if}
 		Līderi
 	</h1>
