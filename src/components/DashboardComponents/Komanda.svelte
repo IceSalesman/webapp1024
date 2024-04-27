@@ -24,7 +24,7 @@
 
 
 	onMount(async () => {
-		const practiceRef = doc(collection(db, 'practices'), '2024-04-20');
+		const practiceRef = doc(collection(db, 'practices'), pId);
 		const practiceSnap = await getDoc(practiceRef);
 
 		if (practiceSnap.exists()) {

@@ -7,7 +7,7 @@
 	import Atminas from './DashboardComponents/Atminas.svelte';
 	import Kontakti from './DashboardComponents/Kontakti.svelte';
 	import Komanda from './DashboardComponents/Komanda.svelte';
-
+	import Admin from './DashboardComponents/Admin.svelte';
 	import { collection, doc, setDoc, getDoc } from 'firebase/firestore';
 	import { onMount } from 'svelte';
 	import { userStore, practiceId } from '../stores/stores';
@@ -203,6 +203,18 @@
 						>Kontakti</a
 					>
 				</li>
+				{#if user.isAdmin}
+					<li>
+						<!-- svelte-ignore a11y-invalid-attribute -->
+						<a
+							on:click={() => setActiveTab('Admin')}
+							on:click={toggleNav}
+							href=""
+							class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
+							aria-current="page">Admin</a
+						>
+					</li>
+				{/if}
 			</ul>
 		</div>
 	</div>
@@ -239,5 +251,10 @@
 		<div class="">
 			<Kontakti />
 		</div>
+	{/if}
+	{#if activeTab === 'Admin'}
+	<div class="">
+		<Admin />
+	</div>
 	{/if}
 </div>
