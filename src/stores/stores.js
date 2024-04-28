@@ -13,16 +13,19 @@ export const userStore = writable({
 export const currentDate = writable(new Date());
 
 export const dateInfo = derived(currentDate, ($currentDate) => {
-	const dd = $currentDate.getDate();
-	const mm = $currentDate.getMonth();
+	const dateCopy = new Date($currentDate.getTime());
 	let daysTillSaturday = 6 - $currentDate.getDay();
-	const saturdayDate = dd + daysTillSaturday;
 
 	if (daysTillSaturday < 0) {
 		daysTillSaturday = 6;
 	}
 
-	return { mm, daysTillSaturday, saturdayDate };
+	dateCopy.setDate(dateCopy.getDate() + daysTillSaturday);
+
+	const dd = dateCopy.getDate();
+	const mm = dateCopy.getMonth();
+
+	return { date: dateCopy, mm, daysTillSaturday, dd };
 });
 
 export const sortBy = writable('elo');

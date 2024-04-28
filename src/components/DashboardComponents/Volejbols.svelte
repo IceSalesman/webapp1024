@@ -17,7 +17,12 @@
 
 	let attendees: any[] = [];
 
-	let dateData: { daysTillSaturday: any; saturdayDate: any; mm: any };
+	let dateData: {
+		dd: any;
+		date: Date;
+		daysTillSaturday: number;
+		mm: number;
+	};
 
 	dateInfo.subscribe((value) => {
 		dateData = value;
@@ -30,6 +35,7 @@
 		uid?: StringConstructor;
 		isAdmin?: boolean;
 	};
+
 	let pId: string;
 
 	userStore.subscribe((value) => {
@@ -71,7 +77,6 @@
 		isCheckedIn = !isCheckedIn;
 		window.location.reload();
 	}
-
 </script>
 
 <svelte:head>
@@ -93,10 +98,9 @@
 				<div class="flex h-full flex-col items-center justify-center p-1 text-lg">
 					<div class="flex items-center justify-center text-center">
 						<strong
-							>{dayDict[dateData.daysTillSaturday]}, {dateData.saturdayDate}.{monthDict[
-								dateData.mm
-							]}, 18:00(19:00 uz papīriem) <i>mūsu skolas</i> (Ūnijas iela 93) zālē volejbols
-						</strong>
+							>{dayDict[dateData.daysTillSaturday]}, {dateData.dd}.{monthDict[dateData.mm]},
+							18:00(19:00 uz papīriem) <i>mūsu skolas</i> (Ūnijas iela 93) zālē volejbols</strong
+						>
 					</div>
 				</div>
 

@@ -70,37 +70,44 @@
 	}
 
 	onMount(async () => {
-	
+		const practiceRef = doc(collection(db, 'practices'), pId);
+		const practiceSnap = await getDoc(practiceRef);
+
+		if (practiceSnap.exists()) {
+			attendees = practiceSnap.data().attendees;
+		} else {
+			console.log('No such document!');
+		}
 	});
 </script>
 
 <main class="grid grid-flow-col items-start h-screen text-gray-100 bg-gray-800 p-4">
-    <div class="bg-gray-900 p-10 rounded max-w-lg">
-        <div class="mb-4">
-            <p class="font-bold">Vārds:</p>
-            <p>{user.displayName}</p>
-        </div>
-        <div class="mb-4">
-            <p class="font-bold">E-pasts:</p>
-            <p>{user.email}</p>
-        </div>
-        <form on:submit={handleSubmit}>
-            <div class="mb-4">
-                <p class="font-bold">Mainīt vārdu:</p>
-                <input
-                    type="text"
-                    bind:value={newDisplayName}
-                    class="w-full p-2 border rounded bg-gray-800 border-gray-700"
-                />
-            </div>
-            <div>
-                <button
-                    type="submit"
-                    class="block w-full p-3 text-center rounded-sm text-gray-900 bg-violet-300"
-                >
-                    Mainīt vārdu
-                </button>
-            </div>
-        </form>
-    </div>
+	<div class="bg-gray-900 p-10 rounded max-w-lg">
+		<div class="mb-4">
+			<p class="font-bold">Vārds:</p>
+			<p>{user.displayName}</p>
+		</div>
+		<div class="mb-4">
+			<p class="font-bold">E-pasts:</p>
+			<p>{user.email}</p>
+		</div>
+		<form on:submit={handleSubmit}>
+			<div class="mb-4">
+				<p class="font-bold">Mainīt vārdu:</p>
+				<input
+					type="text"
+					bind:value={newDisplayName}
+					class="w-full p-2 border rounded bg-gray-800 border-gray-700"
+				/>
+			</div>
+			<div>
+				<button
+					type="submit"
+					class="block w-full p-3 text-center rounded-sm text-gray-900 bg-violet-300"
+				>
+					Mainīt vārdu
+				</button>
+			</div>
+		</form>
+	</div>
 </main>
