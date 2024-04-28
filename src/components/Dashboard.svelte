@@ -8,12 +8,20 @@
 	import Kontakti from './DashboardComponents/Kontakti.svelte';
 	import Komanda from './DashboardComponents/Komanda.svelte';
 	import Admin from './DashboardComponents/Admin.svelte';
-	import { collection, doc, setDoc, getDoc } from 'firebase/firestore';
+	import {
+		collection,
+		doc,
+		setDoc,
+		getDoc,
+		updateDoc,
+		writeBatch,
+		getDocs
+	} from 'firebase/firestore';
 	import { onMount } from 'svelte';
 	import { userStore, practiceId } from '../stores/stores';
 
 	let attendees: any[];
-	let players: any[] = [];
+	let player: any[] = [];
 	let admin = false;
 	let pId: string;
 
@@ -25,6 +33,9 @@
 		displayName: string;
 		isAdmin: boolean;
 		isverified: boolean;
+		accountVerified: boolean;
+		goldPoints: any;
+
 	};
 	practiceId.subscribe((value) => {
 		pId = value;
@@ -40,7 +51,10 @@
 			email: currentUser?.currentUser?.email,
 			isverified: currentUser?.currentUser?.emailVerified,
 			uid: currentUser?.currentUser?.uid,
-			isAdmin: admin
+			isAdmin: admin,
+			accountVerified: false,
+
+			goldPoints: user.goldPoints
 		};
 	});
 
@@ -54,6 +68,24 @@
 		} else {
 			user.isAdmin = false;
 		}
+	}
+
+	async function getGP(player: any[]) {
+		if (player[0]?.goldPoints) {
+			user.goldPoints = player[0].goldPoints;
+		} else {
+			user.goldPoints = 0;
+		}
+		
+	}
+
+	async function isAccountVerified(player: any[]) {
+		if (player[0]?.accountVerified) {
+			user.accountVerified = true;
+		} else {
+			user.accountVerified = false;
+		}
+		console.log(user.accountVerified);
 	}
 
 	onMount(async () => {
@@ -72,20 +104,25 @@
 		const playerSnap = await getDoc(playerRef);
 
 		if (playerSnap.exists()) {
-			players = playerSnap.data().wins;
+			player = playerSnap.data() as any[];
 		} else {
 			await setDoc(playerRef, {
 				displayName: user.displayName,
 				wins: 0,
 				losses: 0,
 				playerElo: 1200,
-				winLossRate: 0
+				winLossRate: 0,
+				accountVerified: false,
+				goldPoints: 0
 			});
 		}
 
 		document.title = 'Volejbols';
 
 		findAdmins();
+		isAccountVerified(player);
+		
+		
 	});
 
 	let activeTab = 'Volejbols';
@@ -106,7 +143,7 @@
 	<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
 		<a href="/privatedashboard" class="flex items-center space-x-3 rtl:space-x-reverse">
 			<img src="logo.svg" class="h-10" alt="Logo" />
-			<img src="dpvk_light.svg" class ="h-8" alt="Dāvja Pirts Volejbola Klubs" />
+			<img src="dpvk_light.svg" class="h-8" alt="Dāvja Pirts Volejbola Klubs" />
 		</a>
 		<div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
 			<button
@@ -253,8 +290,8 @@
 		</div>
 	{/if}
 	{#if activeTab === 'Admin'}
-	<div class="">
-		<Admin />
-	</div>
+		<div class="">
+			<Admin />
+		</div>
 	{/if}
 </div>

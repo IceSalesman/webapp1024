@@ -18,7 +18,7 @@
 	});
 	practiceId.subscribe((value) => {
 		pId = value;
-	});
+	});t
 
 	let attendees: any;
 

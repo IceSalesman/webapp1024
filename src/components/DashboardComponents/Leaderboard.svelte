@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { userStore, practiceId, sortBy } from '../../stores/stores';
 	import { db } from '../../lib/firebase/firebase.client';
-	import { collection, getDocs } from 'firebase/firestore';
+	import { collection, doc, getDocs, writeBatch } from 'firebase/firestore';
 	import { onDestroy, onMount } from 'svelte';
+
 	let playerData: any = [];
 
 	let user;
@@ -46,8 +47,8 @@
 	}
 
 	function sortPlayers(
-		a: { playerElo: number; losses: number; wins: number },
-		b: { playerElo: number; losses: number; wins: number }
+		a: { playerElo: number; losses: number; wins: number; goldPoints: number },
+		b: { playerElo: number; losses: number; wins: number; goldPoints: number }
 	) {
 		if ($sortBy === 'elo') {
 			return b.playerElo - a.playerElo;
@@ -59,6 +60,8 @@
 			return b.wins - a.wins;
 		} else if ($sortBy === 'l') {
 			return b.losses - a.losses;
+		} else if ($sortBy === 'gp') {
+			return b.goldPoints - a.goldPoints;
 		}
 	}
 
@@ -70,6 +73,23 @@
 			return wl;
 		}
 	}
+	async function addRatingToPlayersWithGoldPoints() {
+		const playersRef = collection(db, 'players');
+		const playersSnapshot = await getDocs(playersRef);
+
+		let batch = writeBatch(db);
+
+		playersSnapshot.docs.forEach((playerDoc) => {
+			const playerData = playerDoc.data();
+			if (playerData.goldPoints > 0) {
+				const playerRef = doc(db, 'players', playerDoc.id);
+				const updatedRating = (playerData.playerElo || 0) + 100;
+				batch.update(playerRef, { playerElo: updatedRating });
+			}
+		});
+
+		await batch.commit();
+	}
 </script>
 
 <div class="flex flex-col items-center justify-center overflow-auto">
@@ -78,6 +98,7 @@
 		{:else if $sortBy === 'wl'}Uzvaras procentu
 		{:else if $sortBy === 'w'}Uzvaru
 		{:else if $sortBy === 'l'}Zaudējumu
+		{:else if $sortBy === 'gp'}Zelta Punktu
 		{/if}
 		Līderi
 	</h1>
@@ -114,6 +135,11 @@
 							>Reitings</button
 						>
 					</th>
+					<th scope="col" class="text-sm font-medium text-center golden-name px-6 py-4 text-left"
+						><button class={$sortBy === 'gp' ? 'font-bold' : ''} on:click={() => ($sortBy = 'gp')}
+							>ZP</button
+						>
+					</th>
 				</tr></thead
 			>
 			<tbody>
@@ -131,13 +157,17 @@
 									{i + 1}
 								{/if}</td
 							>
-							<td class="text-sm text-gray-100 font-light px-6 py-4 whitespace-nowrap"
-								>{player.displayName}</td
+							<td
+								class="text-sm text-gray-100 font-light px-6 py-4 whitespace-nowrap {player.goldPoints >
+								0
+									? 'golden-name'
+									: ''}">{player.displayName}</td
 							>
 							<td>{player.wins}</td>
 							<td>{player.losses}</td>
 							<td>{getWL(player)}%</td>
 							<td>{player.playerElo.toFixed(0)}</td>
+							<td>{player.goldPoints}</td>
 						</tr>
 					{/each}
 				{/if}
@@ -163,5 +193,8 @@
 		td {
 			padding: 0.5rem;
 		}
+	}
+	.golden-name {
+		color: gold;
 	}
 </style>

@@ -5,7 +5,9 @@ export const userStore = writable({
 	email: String,
 	isverified: false,
 	uid: String,
-	isAdmin: false
+	isAdmin: false,
+	accountVerified: false,
+	goldPoints: 0
 });
 
 export const currentDate = writable(new Date());
