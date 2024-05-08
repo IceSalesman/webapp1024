@@ -98,7 +98,6 @@
 		{:else if $sortBy === 'wl'}Uzvaras procentu
 		{:else if $sortBy === 'w'}Uzvaru
 		{:else if $sortBy === 'l'}Zaudējumu
-		{:else if $sortBy === 'gp'}Zelta Punktu
 		{/if}
 		Līderi
 	</h1>
@@ -135,11 +134,6 @@
 							>Reitings</button
 						>
 					</th>
-					<th scope="col" class="text-sm font-medium text-center golden-name px-6 py-4 text-left"
-						><button class={$sortBy === 'gp' ? 'font-bold' : ''} on:click={() => ($sortBy = 'gp')}
-							>ZP</button
-						>
-					</th>
 				</tr></thead
 			>
 			<tbody>
@@ -167,7 +161,6 @@
 							<td>{player.losses}</td>
 							<td>{getWL(player)}%</td>
 							<td>{player.playerElo.toFixed(0)}</td>
-							<td>{player.goldPoints}</td>
 						</tr>
 					{/each}
 				{/if}

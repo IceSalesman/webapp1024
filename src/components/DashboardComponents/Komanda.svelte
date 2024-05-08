@@ -185,6 +185,16 @@
 			await updateDoc(playerDocRef, { playerElo: 1200 });
 		});
 	}
+
+	async function rem100RatingAndGoldPoints() {
+		const playersCollectionRef = collection(db, 'players');
+		const playersSnapshot = await getDocs(playersCollectionRef);
+
+		playersSnapshot.forEach(async (playerDoc) => {
+			const playerDocRef = doc(db, 'players', playerDoc.id);
+			await updateDoc(playerDocRef, { goldPoints: 0 });
+		});
+	}
 </script>
 
 <svelte:head>
@@ -287,6 +297,7 @@
 							{/if}
 						</div>
 					{/each}
+					
 				</div>
 			</div>
 		</div>
