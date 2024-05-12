@@ -7,15 +7,16 @@
 	import Atminas from './DashboardComponents/Atminas.svelte';
 	import Kontakti from './DashboardComponents/Kontakti.svelte';
 	import Komanda from './DashboardComponents/Komanda.svelte';
-	import Admin from './DashboardComponents/Admin.svelte';
+	import PendingUsers from './DashboardComponents/PendingUsers.svelte';
 	import {
 		collection,
 		doc,
 		setDoc,
 		getDoc,
-		updateDoc,
-		writeBatch,
-		getDocs
+		getDocs,
+		query,
+		where,
+		snapshotEqual
 	} from 'firebase/firestore';
 	import { onMount } from 'svelte';
 	import { userStore, practiceId } from '../stores/stores';
@@ -24,6 +25,8 @@
 	let player: any[] = [];
 	let admin = false;
 	let pId: string;
+
+
 
 	let currentUser: { currentUser: any; isLoading?: boolean };
 
@@ -35,7 +38,6 @@
 		isverified: boolean;
 		accountVerified: boolean;
 		goldPoints: any;
-
 	};
 	practiceId.subscribe((value) => {
 		pId = value;
@@ -76,16 +78,6 @@
 		} else {
 			user.goldPoints = 0;
 		}
-		
-	}
-
-	async function isAccountVerified(player: any[]) {
-		if (player[0]?.accountVerified) {
-			user.accountVerified = true;
-		} else {
-			user.accountVerified = false;
-		}
-		console.log(user.accountVerified);
 	}
 
 	onMount(async () => {
@@ -120,10 +112,25 @@
 		document.title = 'Volejbols';
 
 		findAdmins();
-		isAccountVerified(player);
-		
+
+		checkIfPending(user);
+
 		
 	});
+
+	async function checkIfPending(user: any) {
+		const pendingUsersRef = doc(collection(db, 'pendingUsers'), user.uid);
+		const pUSnap = await getDoc(pendingUsersRef);
+
+		if (!user.accountVerified) {
+			if (!pUSnap.exists()) {
+				await setDoc(pendingUsersRef, {
+					displayName: user.displayName,
+					email: user.email
+				});
+			}
+		}
+	}
 
 	let activeTab = 'Volejbols';
 
@@ -244,11 +251,11 @@
 					<li>
 						<!-- svelte-ignore a11y-invalid-attribute -->
 						<a
-							on:click={() => setActiveTab('Admin')}
+							on:click={() => setActiveTab('PendingUsers')}
 							on:click={toggleNav}
 							href=""
 							class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:hover:text-blue-500 text-white hover:bg-gray-700 hover:text-white md:hover:bg-transparent border-gray-700"
-							aria-current="page">Admin</a
+							aria-current="page">Pending lietotāji</a
 						>
 					</li>
 				{/if}
@@ -289,9 +296,9 @@
 			<Kontakti />
 		</div>
 	{/if}
-	{#if activeTab === 'Admin'}
+	{#if activeTab === 'PendingUsers'}
 		<div class="">
-			<Admin />
+			<PendingUsers />
 		</div>
 	{/if}
 </div>
